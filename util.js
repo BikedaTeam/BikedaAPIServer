@@ -12,7 +12,6 @@ util.successTrue = function(data){
 };
 
 util.successFalse = function(err){
-  if(!err&&!message) message = 'data not found';
   return {
     success:false,
     errors:(err)? util.parseError(err): null,
@@ -33,7 +32,8 @@ util.parseError = function(errors){
   } else if( errors.errors ) {
     parsed = errors.errors;
   } else {
-    parsed.unhandled = errors;
+    console.log(errors);
+    parsed.msg = "system error";
   }
   return parsed;
 };

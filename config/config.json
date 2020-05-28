@@ -3,7 +3,7 @@
     "username": "bikeda",
     "password": "bikeda",
     "database": "bikeda",
-    "host": "127.0.0.1",
+    "host": "192.168.0.35",
     "dialect": "mysql",
     "operatorsAliases": false
   },
@@ -11,7 +11,7 @@
     "username": "bikeda",
     "password": "bikeda",
     "database": "bikeda",
-    "host": "127.0.0.1",
+    "host": "192.168.0.35",
     "dialect": "mysql",
     "operatorsAliases": false
   },
@@ -19,7 +19,7 @@
     "username": "bikeda",
     "password": "bikeda",
     "database": "bikeda",
-    "host": "127.0.0.1",
+    "host": "192.168.0.35",
     "dialect": "mysql",
     "operatorsAliases": false
   }
