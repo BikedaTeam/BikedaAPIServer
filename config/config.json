@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "bikeda",
+    "password": "bikeda",
+    "database": "bikeda",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+  "test": {
+    "username": "bikeda",
+    "password": "bikeda",
+    "database": "bikeda",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+  "production": {
+    "username": "bikeda",
+    "password": "bikeda",
+    "database": "bikeda",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  }
+}
