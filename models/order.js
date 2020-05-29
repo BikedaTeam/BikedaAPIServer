@@ -83,7 +83,7 @@ module.exports = ( sequelize, DataTypes ) => {
       comment : "주문 배달 일시"
     },
     ordDlvrDstnc : {
-      type: DataTypes.STRING(5,2),
+      type: DataTypes.DECIMAL(5,2),
       allowNull: false,
       comment : "주문 배달 거리"
     },

@@ -60,7 +60,7 @@ router.post('/branch', util.isLoggedin, [
   check('brcofcFeeAmnt').if(check('brcofcFeeSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric(),
   check('brcofcFeeRate').if(check('brcofcFeeSeCd').isIn(['02'])).exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
   check('brcofcStateCd').exists().bail().notEmpty().bail().isIn(['01','02'])
-],function( req, res, next ) {
+], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
   var data = req.body;
@@ -262,19 +262,16 @@ router.delete('/branch-share', util.isLoggedin,  [
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
 
-  var data = req.body;
-  delete data.shareDelayTime;
+  var shareId = req.body.shareId;
+  var brcofcId = req.body.brcofcId;
 
-  models.branch_share.findAll( { where : data } ).then( result => {
+  models.branch_share.findAll( { where : { shareId: shareId, brcofcId: brcofcId } } ).then( result => {
     if( !result ) {
       var error = { msg : "지점 공유 정보가 등록 되어있지 않습니다."};
       errors.errors= error;
-      return res.status(400).json( util.successFalse( errors) ); 
+      return res.status(400).json( util.successFalse( errors) );
     }
-    delete req.body.shareId;
-    delete req.body.brcofcId;
-
-    models.branch_share.destroy( { where : data } ).then( result => {
+    models.branch_share.destroy( { where : { shareId: shareId, brcofcId: brcofcId } } ).then( result => {
       return res.status(200).json( util.successTrue( result ) );
     }).catch( err => {
       return res.status(400).json( util.successFalse( err ) );

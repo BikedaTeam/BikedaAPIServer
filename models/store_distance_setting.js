@@ -14,12 +14,12 @@ module.exports = ( sequelize, DataTypes ) => {
       comment : "상점 ID"
     },
     setStdDstnc : {
-      type: DataTypes.STRING(5,2),
+      type: DataTypes.DECIMAL(5,2),
       allowNull: false,
       comment : "설정 시작 거리"
     },
     setEndDstnc : {
-      type: DataTypes.STRING(5,2),
+      type: DataTypes.DECIMAL(5,2),
       allowNull: false,
       comment : "설정 종료 거리"
     },

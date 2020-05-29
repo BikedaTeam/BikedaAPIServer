@@ -7,7 +7,7 @@ var { check, validationResult } = require('express-validator');
 
 // 관리자 로그 인증 및 토큰생성
 router.post('/admin', [
-  check('brcofcBsnsRgnmb').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('stoLo').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
   check('adminId').exists().bail().notEmpty(),
   check('adminPassword').exists().bail().notEmpty()
 ], function( req, res, next ){
