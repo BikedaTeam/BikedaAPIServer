@@ -121,7 +121,6 @@ router.put('/branch', util.isLoggedin, [
   models.branch.findOne( { where : { brcofcId: brcofcId } } ).then( result => {
     if( !result ) {
       var error = { msg : "존재하지 않는 지점 ID. brcofcId : ' + brcofcId"};
-
       errors.errors= error;
       return res.status(400).json( util.successFalse( errors ) );
     }
@@ -141,6 +140,8 @@ router.get('/branch-point', util.isLoggedin, [
   check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('pointSeCd').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var brcofcId      = reqParam.brcofcId || '';
@@ -156,21 +157,14 @@ router.get('/branch-point', util.isLoggedin, [
   });
 });
 // 바이크다 지점 포인트 등록
-router.post('/branch-point', util.isLoggedin, function( req, res, next ) {
-  var validationError = {
-    name:'ValidationError',
-    errors:{}
-  };
-
-  //입력 값 검증
-  var validErrors = point_valid.create.validate(req.body);
-  if( validErrors.length > 0 ){
-    for( var error in validErrors ){
-      var validError = validErrors[error];
-      validationError.errors[validError.path] = {message: validError.message };
-    }
-    return res.status(400).json( util.successFalse( validationError) );
-  }
+router.post('/branch-point', util.isLoggedin, [
+  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('pointSeCd').exists().bail().notEmpty().bail().isIn(['01','02']),
+  check('pointAmnt').exists().bail().notEmpty().bail().isNumeric(),
+  check('pointNote').optional().notEmpty().bail()
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
 
   models.branch_point.create( req.body ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -180,19 +174,17 @@ router.post('/branch-point', util.isLoggedin, function( req, res, next ) {
 });
 
 // 바이크다 지점 공유 정보 조회( 공유 ID, 지점 ID )
-router.get('/branch-share', util.isLoggedin, function( req, res, next ) {
-  var validationError = {
-    name:'ValidationError',
-    errors:{}
-  };
+router.get('/branch-share', util.isLoggedin, [
+  check('shareId').optional().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId').optional().notEmpty().bail().isLength({ min: 5, max: 5 })
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+
   var reqParam = req.query || '';
   var shareId     = reqParam.shareId || '';
   var brcofcId    = reqParam.brcofcId || '';
 
-  if( !shareId && !brcofcId) {
-    validationError.errors.validate = { message:'공유 지점 ID 또는 대상 지점 ID 는 필수 입니다.' };
-    return res.status(400).json( util.successFalse( validationError) );
-  }
   var where = {}
   if( shareId ) where.shareId = shareId;
   if( brcofcId ) where.brcofcId = brcofcId;
@@ -204,28 +196,22 @@ router.get('/branch-share', util.isLoggedin, function( req, res, next ) {
 });
 
 // 바이크다 지점 공유  등록
-router.post('/branch-share', util.isLoggedin, function( req, res, next ) {
-  var validationError = {
-    name:'ValidationError',
-    errors:{}
-  };
+router.post('/branch-share', util.isLoggedin, [
+  check('shareId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('shareDelayTime').exists().bail().notEmpty().bail().isLength({ min: 6, max: 6 }).bail().isNumeric(),
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
 
-  //입력 값 검증
-  var validErrors = share_valid.create.validate(req.body);
-  if( validErrors.length > 0 ){
-    for( var error in validErrors ){
-      var validError = validErrors[error];
-      validationError.errors[validError.path] = {message: validError.message };
-    }
-    return res.status(400).json( util.successFalse( validationError) );
-  }
   var data = req.body;
   delete data.shareDelayTime;
 
   models.branch_share.findAll( { where : data } ).then( result => {
     if( result ) {
-      validationError.errors.already = {message:'이미 등록된 지점 공유 정보' };
-      return res.status(400).json( util.successFalse( validationError) );
+      var error = { msg : "이미 등록된 지점 공유 정보"};
+      errors.errors= error;
+      return res.status(400).json( util.successFalse( errors) );
     }
     models.branch_share.create( req.body ).then( result => {
       return res.status(200).json( util.successTrue( result ) );
@@ -238,28 +224,22 @@ router.post('/branch-share', util.isLoggedin, function( req, res, next ) {
 });
 
 // 바이크다 지점 공유 수정
-router.put('/branch-share', util.isLoggedin, function( req, res, next ) {
-  var validationError = {
-    name:'ValidationError',
-    errors:{}
-  };
+router.put('/branch-share', util.isLoggedin, [
+  check('shareId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('shareDelayTime').exists().bail().notEmpty().bail().isLength({ min: 6, max: 6 }).bail().isNumeric(),
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
 
-  //입력 값 검증
-  var validErrors = share_valid.update.validate(req.body);
-  if( validErrors.length > 0 ){
-    for( var error in validErrors ){
-      var validError = validErrors[error];
-      validationError.errors[validError.path] = {message: validError.message };
-    }
-    return res.status(400).json( util.successFalse( validationError) );
-  }
   var data = req.body;
   delete data.shareDelayTime;
 
   models.branch_share.findAll( { where : data } ).then( result => {
     if( !result ) {
-      validationError.errors.already = {message:'지점 공유 정보가 등록 되어있지 않습니다.' };
-      return res.status(400).json( util.successFalse( validationError) );
+      var error = { msg : "지점 공유 정보가 등록 되어있지 않습니다."};
+      errors.errors= error;
+      return res.status(400).json( util.successFalse( errors) );
     }
     delete req.body.shareId;
     delete req.body.brcofcId;
@@ -275,27 +255,21 @@ router.put('/branch-share', util.isLoggedin, function( req, res, next ) {
 });
 
 // 바이크다 지점 공유 삭제
-router.delete('/branch-share', util.isLoggedin, function ( req, res, next ) {
-  var validationError = {
-    name:'ValidationError',
-    errors:{}
-  };
-  //입력 값 검증
-  var validErrors = share_valid.update.validate(req.body);
-  if( validErrors.length > 0 ){
-    for( var error in validErrors ){
-      var validError = validErrors[error];
-      validationError.errors[validError.path] = {message: validError.message };
-    }
-    return res.status(400).json( util.successFalse( validationError) );
-  }
+router.delete('/branch-share', util.isLoggedin,  [
+  check('shareId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+], function ( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+
   var data = req.body;
   delete data.shareDelayTime;
 
   models.branch_share.findAll( { where : data } ).then( result => {
     if( !result ) {
-      validationError.errors.already = {message:'지점 공유 정보가 등록 되어있지 않습니다.' };
-      return res.status(400).json( util.successFalse( validationError) );
+      var error = { msg : "지점 공유 정보가 등록 되어있지 않습니다."};
+      errors.errors= error;
+      return res.status(400).json( util.successFalse( errors) ); 
     }
     delete req.body.shareId;
     delete req.body.brcofcId;
