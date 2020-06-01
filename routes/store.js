@@ -386,8 +386,8 @@ router.delete('/store-distance', util.isLoggedin, [
   });
 });
 
-// 바이크다 상점 구역 설정 조회( 상점 ID, 할증 구분 코드 )
-router.get('/store-zone', util.isLoggedin, [
+// 바이크다 상점 지역 설정 조회( 상점 ID )
+router.get('/store-area', util.isLoggedin, [
   check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
@@ -398,18 +398,20 @@ router.get('/store-zone', util.isLoggedin, [
 
   var where = {}
   where.stoId = stoId;
-  models.store_zone_setting.findAll( { where : where } ).then( result => {
+  models.store_area_setting.findAll( { where : where } ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
   }).catch( err => {
     return res.status(400).json( util.successFalse( err ) );
   });
 });
 
-// 바이크다 상점 거리 설정 등록
-router.post('/store-zone', util.isLoggedin, [
+// 바이크다 상점 지역 설정 등록
+router.post('/store-area', util.isLoggedin, [
   check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setStdDstnc').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('setEndDstnc').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
+  check('setPrvncSeCd').exists().bail().notEmpty().bail().isIn(['11','26','27','28','29','30','31','41','42','43','44','45','46','47','48','49','50']),
+  check('setMncplSeCd').exists().bail().notEmpty().bail().isNumeric(),
+  check('setSbmncSeCd').exists().bail().notEmpty().bail().isNumeric(),
+  check('setVlgSeCd').exists().bail().isNumeric(),
   check('setAmnt').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);

@@ -20,7 +20,7 @@ db.branch_share = require('./branch_share')(sequelize, Sequelize);
 db.store = require('./store')(sequelize, Sequelize);
 db.store_point = require('./store_point')(sequelize, Sequelize);
 db.store_surcharge = require('./store_surcharge')(sequelize, Sequelize);
-db.store_zone_setting = require('./store_zone_setting')(sequelize, Sequelize);
+db.store_area_setting = require('./store_area_setting')(sequelize, Sequelize);
 db.store_distance_setting = require('./store_distance_setting')(sequelize, Sequelize);
 
 db.rider = require('./rider')(sequelize, Sequelize);

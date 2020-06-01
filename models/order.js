@@ -26,6 +26,11 @@ module.exports = ( sequelize, DataTypes ) => {
       allowNull: false,
       comment : "주문 고객 도로명 주소"
     },
+    ordCusDetlAdres : {
+      type: DataTypes.STRING(1000),
+      allowNull: false,
+      comment : "주문 고객 상세 주소"
+    },
     ordCusLa : {
       type: DataTypes.DECIMAL(24,20),
       allowNull: true,
