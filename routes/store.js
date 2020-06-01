@@ -408,29 +408,35 @@ router.get('/store-area', util.isLoggedin, [
 // 바이크다 상점 지역 설정 등록
 router.post('/store-area', util.isLoggedin, [
   check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setPrvncSeCd').exists().bail().notEmpty().bail().isIn(['11','26','27','28','29','30','31','41','42','43','44','45','46','47','48','49','50']),
-  check('setMncplSeCd').exists().bail().notEmpty().bail().isNumeric(),
-  check('setSbmncSeCd').exists().bail().notEmpty().bail().isNumeric(),
-  check('setVlgSeCd').exists().bail().isNumeric(),
+  check('setHCd').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setDCd').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setPrvnc').exists().bail().notEmpty(),
+  check('setMncpl').exists().bail().notEmpty(),
+  check('setSbmnc').exists().bail().notEmpty(),
+  check('setVlg').optional().notEmpty(),
   check('setAmnt').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
 
-  models.store_distance_setting.create( req.body ).then( result => {
+  models.store_area_setting.create( req.body ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
   }).catch( err => {
     return res.status(400).json( util.successFalse( err ) );
   });
 });
 
-// 바이크다 상점 거리 설정 수정
-router.put('/store-distance', util.isLoggedin, [
+// 바이크다 상점 지역 설정 수정
+router.put('/store-area', util.isLoggedin, [
   check('setSeqNo').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setStdDstnc').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('setEndDstnc').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('setAmnt').optional().notEmpty().bail().isNumeric()
+  check('setHCd').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setDCd').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setPrvnc').optional().notEmpty(),
+  check('setMncpl').optional().notEmpty(),
+  check('setSbmnc').optional().notEmpty(),
+  check('setVlg').optional().notEmpty(),
+  check('setAmnt').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -442,14 +448,14 @@ router.put('/store-distance', util.isLoggedin, [
   delete data.setSeqNo;
   delete data.stoId;
 
-  // 상점 거리 설정 등록 여부 검증
-  models.store_distance_setting.findOne( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+  // 상점 지역 설정 등록 여부 검증
+  models.store_area_setting.findOne( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "등록 되지 않은 거리 설정 정보"};
+      var error = { msg : "등록 되지 않은 지역 설정 정보"};
       errors.errors= error;
       return res.status(400).json( util.successFalse( errors ) );
     }
-    models.store_distance_setting.update( data, { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+    models.store_area_setting.update( data, { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
     }).catch( err => {
       return res.status(400).json( util.successFalse( err ) );
@@ -460,7 +466,7 @@ router.put('/store-distance', util.isLoggedin, [
 });
 
 // 바이크다 상점 거리 설정 삭제
-router.delete('/store-distance', util.isLoggedin, [
+router.delete('/store-area', util.isLoggedin, [
   check('setSeqNo').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
@@ -475,13 +481,13 @@ router.delete('/store-distance', util.isLoggedin, [
   delete data.stoId;
 
   // 상점 거리 설정 등록 여부 검증
-  models.store_distance_setting.findAll( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+  models.store_area_setting.findAll( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "등록 되지 않은 거리 설정 정보"};
+      var error = { msg : "등록 되지 않은 지역 설정 정보"};
       errors.errors= error;
       return res.status(400).json( util.successFalse( errors ) );
     }
-    models.store_distance_setting.destroy( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+    models.store_area_setting.destroy( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
     }).catch( err => {
       return res.status(400).json( util.successFalse( err ) );
