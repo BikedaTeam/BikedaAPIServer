@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 
 var authApi = require('./routes/auth');
 var branchApi = require('./routes/branch');
+var storeApi = require('./routes/store');
 
 var sequelize = require('./models/index').sequelize;
 var app = express();
@@ -42,6 +43,7 @@ app.use(function(req, res, next) {
 // API routes
 app.use('/api/auth', authApi);
 app.use('/api/branch', branchApi);
+app.use('/api/store', storeApi);
 
 
 // error handler

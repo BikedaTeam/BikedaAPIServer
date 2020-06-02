@@ -67,9 +67,8 @@ router.post('/branch', util.isLoggedin, [
   // 지점 등록 여부 검증
   models.branch.findOne( { where : { brcofcBsnsRgnmb: data.brcofcBsnsRgnmb } } ).then( result => {
     if( result ) {
-      var error = { msg : "이미 등록된 사업자 번호 입니다."};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "이미 등록된 사업자 번호 입니다."};
+      return res.status(400).json( util.successFalse( error ) );
     }
     // 지점 ID 생성
     var query = "select cast( concat('B', lpad( concat( ifnull( max( cast( substr( brcofcId, 2 ) AS unsigned ) ) , 0 ) + 1 ), 4, '0' ) ) as char ) as brcofcId from tb_branches";
@@ -120,9 +119,8 @@ router.put('/branch', util.isLoggedin, [
   console.log(brcofcId);
   models.branch.findOne( { where : { brcofcId: brcofcId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "존재하지 않는 지점 ID. brcofcId : ' + brcofcId"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "존재하지 않는 지점 ID. brcofcId : ' + brcofcId"};
+      return res.status(400).json( util.successFalse( error ) );
     }
     models.branch.update( data, { where : { brcofcId: brcofcId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
@@ -209,9 +207,8 @@ router.post('/branch-share', util.isLoggedin, [
 
   models.branch_share.findAll( { where : data } ).then( result => {
     if( result ) {
-      var error = { msg : "이미 등록된 지점 공유 정보"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors) );
+      var error = { message : "이미 등록된 지점 공유 정보"};
+      return res.status(400).json( util.successFalse( error) );
     }
     models.branch_share.create( req.body ).then( result => {
       return res.status(200).json( util.successTrue( result ) );
@@ -237,9 +234,8 @@ router.put('/branch-share', util.isLoggedin, [
 
   models.branch_share.findAll( { where : data } ).then( result => {
     if( !result ) {
-      var error = { msg : "지점 공유 정보가 등록 되어있지 않습니다."};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors) );
+      var error = { message : "지점 공유 정보가 등록 되어있지 않습니다."};
+      return res.status(400).json( util.successFalse( error) );
     }
     delete req.body.shareId;
     delete req.body.brcofcId;
@@ -267,9 +263,8 @@ router.delete('/branch-share', util.isLoggedin,  [
 
   models.branch_share.findAll( { where : { shareId: shareId, brcofcId: brcofcId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "지점 공유 정보가 등록 되어있지 않습니다."};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors) );
+      var error = { message : "지점 공유 정보가 등록 되어있지 않습니다."};
+      return res.status(400).json( util.successFalse( error) );
     }
     models.branch_share.destroy( { where : { shareId: shareId, brcofcId: brcofcId } } ).then( result => {
       return res.status(200).json( util.successTrue( result ) );

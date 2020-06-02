@@ -7,8 +7,7 @@ var { check, validationResult } = require('express-validator');
 
 // 관리자 로그 인증 및 토큰생성
 router.post('/admin', [
-  check('stoLo').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
-  check('adminId').exists().bail().notEmpty(),
+  check('adminId').exists().withMessage('관리자 ID는 필수 입력 입니다.').bail().notEmpty().withMessage('관리자 ID는 필수 입력 입니다.'),
   check('adminPassword').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
@@ -34,7 +33,7 @@ router.post('/branch', [
 
   models.branch.findOne( { where : { brcofcBsnsRgnmb : req.body.brcofcBsnsRgnmb, brcofcPassword : req.body.brcofcPassword } } ).then( result => {
     if( !result ){
-      var errors = { msg: '존재 하지 않는 사업자 번호 또는 비밀번호 오류' };
+      var errors = { message: '존재 하지 않는 사업자 번호 또는 비밀번호 오류' };
       return res.status(400).json(util.successFalse(errors));
     }
     var payload = {
@@ -61,7 +60,7 @@ router.post('/store', [
 
   models.store.findOne( { where : { stoBsnsRgnmb : req.body.stoBsnsRgnmb, stoPassword : req.body.stoPassword } } ).then( result => {
     if( !result ){
-      var errors = { msg: '존재 하지 않는 사업자 번호 또는 비밀번호 오류' };
+      var errors = { message: '존재 하지 않는 사업자 번호 또는 비밀번호 오류' };
       return res.status(400).json(util.successFalse(errors));
     }
     var payload = {
@@ -88,7 +87,7 @@ router.post('/rider', [
 
   models.rider.findOne( { where : { riderCelno : req.body.riderCelno } } ).then( result => {
     if( !result ){
-      var errors = { msg: '존재 하지 않는 라이더 정보' };
+      var errors = { message: '존재 하지 않는 라이더 정보' };
       return res.status(400).json(util.successFalse(errors));
     }
     var payload = {
@@ -132,7 +131,7 @@ router.post('/re-branch', [
 
   models.branch.findOne( { where : { brcofcBsnsRgnmb : req.body.brcofcBsnsRgnmb } } ).then( result => {
     if( !result ){
-      var errors = { msg: '존재 하지 않는 사업자 번호' };
+      var errors = { message: '존재 하지 않는 사업자 번호' };
       return res.status(400).json(util.successFalse(errors));
     }
     var payload = {
@@ -158,7 +157,7 @@ router.post('/re-store', [
 
   models.store.findOne( { where : { stoBsnsRgnmb : req.body.stoBsnsRgnmb } } ).then( result => {
     if( !result ){
-      var errors = { msg: '존재 하지 않는 사업자 번호' };
+      var errors = { message: '존재 하지 않는 사업자 번호' };
       return res.status(400).json(util.successFalse(errors));
     }
     var payload = {
@@ -183,7 +182,7 @@ router.post('/re-rider', [
 
   models.rider.findOne( { where : { riderCelno : req.body.riderCelno } } ).then( result => {
     if( !result ){
-      var errors = { msg: '존재 하지 않는 라이더 정보' };
+      var errors = { message: '존재 하지 않는 라이더 정보' };
       return res.status(400).json(util.successFalse(errors));
     }
     var payload = {

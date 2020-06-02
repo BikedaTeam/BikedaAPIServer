@@ -72,9 +72,8 @@ router.post('/store', util.isLoggedin, [
   // 상점 등록 여부 검증
   models.store.findOne( { where : { stoBsnsRgnmb: data.stoBsnsRgnmb } } ).then( result => {
     if( result ) {
-      var error = { msg : "이미 등록된 사업자 번호 입니다."};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "이미 등록된 사업자 번호 입니다."};      errors.errors= error;
+      return res.status(400).json( util.successFalse( error ) );
     }
     // 상점 ID 생성
     var query = "select cast( concat('S', lpad( concat( ifnull( max( cast( substr( stoId, 2 ) AS unsigned ) ) , 0 ) + 1 ), 4, '0' ) ) as char ) as stoId from tb_stores";
@@ -128,9 +127,8 @@ router.put('/store', util.isLoggedin, [
   // 상점 등록 여부 검증
   models.store.findOne( { where : { stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "존재하지 않는 상점 ID. brcofcId : ' + brcofcId"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "존재하지 않는 상점 ID. brcofcId : ' + brcofcId"};
+      return res.status(400).json( util.successFalse( error ) );
     }
     models.store.update( data, { where : { stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
@@ -241,9 +239,8 @@ router.put('/store-surcharge', util.isLoggedin, [
   // 상점 할증 등록 여부 검증
   models.store_surcharge.findOne( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "등록 되지 않은 할증 정보"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "등록 되지 않은 할증 정보"};
+      return res.status(400).json( util.successFalse( error ) );
     }
     models.store_surcharge.update( data, { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
@@ -269,9 +266,8 @@ router.delete('/store-surcharge', util.isLoggedin, [
   // 상점 할증 등록 여부 검증
   models.store_surcharge.findAll( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "등록 되지 않은 할증 정보"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "등록 되지 않은 할증 정보"};
+      return res.status(400).json( util.successFalse( error ) );
     }
     models.store_surcharge.destroy( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
@@ -340,9 +336,8 @@ router.put('/store-distance', util.isLoggedin, [
   // 상점 거리 설정 등록 여부 검증
   models.store_distance_setting.findOne( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "등록 되지 않은 거리 설정 정보"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "등록 되지 않은 거리 설정 정보"};
+      return res.status(400).json( util.successFalse( error ) );
     }
     models.store_distance_setting.update( data, { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
@@ -372,9 +367,8 @@ router.delete('/store-distance', util.isLoggedin, [
   // 상점 거리 설정 등록 여부 검증
   models.store_distance_setting.findAll( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "등록 되지 않은 거리 설정 정보"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "등록 되지 않은 거리 설정 정보"};
+      return res.status(400).json( util.successFalse( error ) );
     }
     models.store_distance_setting.destroy( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
@@ -451,9 +445,8 @@ router.put('/store-area', util.isLoggedin, [
   // 상점 지역 설정 등록 여부 검증
   models.store_area_setting.findOne( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "등록 되지 않은 지역 설정 정보"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "등록 되지 않은 지역 설정 정보"};
+      return res.status(400).json( util.successFalse( error ) );
     }
     models.store_area_setting.update( data, { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
@@ -483,9 +476,8 @@ router.delete('/store-area', util.isLoggedin, [
   // 상점 거리 설정 등록 여부 검증
   models.store_area_setting.findAll( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { msg : "등록 되지 않은 지역 설정 정보"};
-      errors.errors= error;
-      return res.status(400).json( util.successFalse( errors ) );
+      var error = { message : "등록 되지 않은 지역 설정 정보"};
+      return res.status(400).json( util.successFalse( error ) );
     }
     models.store_area_setting.destroy( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );

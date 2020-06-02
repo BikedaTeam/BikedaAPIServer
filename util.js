@@ -5,37 +5,29 @@ var util = {};
 
 util.successTrue = function(data){
   return {
-    success:true,
-    errors:null,
-    data:data
+    success : true,
+    message : null,
+    data : data
   };
 };
 
 util.successFalse = function(err){
   return {
     success:false,
-    errors:(err)? util.parseError(err): null,
-    data:null
+    message : (err)? util.parseError(err): null,
+    data : null
   };
 };
 
 util.parseError = function(errors){
-  var parsed = {};
-
-  if(errors.name == 'ValidationError'){
-    for(var name in errors.errors){
-      var validationError = errors.errors[name];
-      parsed[name] = { message:validationError.message };
-    }
-  } else if(errors.code == '11000' && errors.errmsg.indexOf('username') > 0) {
-    parsed.username = { message:'This username already exists!' };
-  } else if( errors.errors ) {
-    parsed = errors.errors;
+  console.log(errors);
+  if( errors.errors ) {
+    return errors.errors[0].msg;
+  } else if( errors.message ) {
+    return errors.message;
   } else {
-    console.log(errors);
-    parsed.msg = "system error";
+    return "system error";
   }
-  return parsed;
 };
 
 
