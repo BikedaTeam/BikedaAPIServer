@@ -8,7 +8,7 @@ var { check, validationResult } = require('express-validator');
 
 // 바이크다 상점 API Document
 router.get('/', function( req, res, next ) {
-  res.render('store', { title: '바이크다 상점 API' });
+  res.render('store', { title: 'Bikeda Store API' });
 });
 
 // 바이크다 상점 전체 목록
@@ -43,27 +43,27 @@ router.get('/store', util.isLoggedin, function( req, res, next ) {
 
 // 바이크다 상점 등록
 router.post('/store', util.isLoggedin, [
-  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('stoBsnsRgnmb').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('stoPassword').exists().bail().notEmpty(),
-  check('stoMtlty').exists().bail().notEmpty(),
-  check('stoBizSeCd').exists().bail().notEmpty().bail().isIn(['01','02']),
-  check('stoRprsntvNm').exists().bail().notEmpty(),
-  check('stoBrdYmd').if(check('stoBizSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
-  check('stoCrprtRgnmb').if(check('stoBizSeCd').isIn(['02'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
-  check('stoOpnngYmd').exists().bail().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
-  check('stoBsnsPlaceAdres').exists().bail().notEmpty(),
-  check('stoBizcnd').exists().bail().notEmpty(),
-  check('stoInduty').exists().bail().notEmpty(),
-  check('stoCelno').exists().bail().notEmpty().isNumeric(),
-  check('stoSetSeCd').exists().bail().notEmpty().bail().isIn(['01','02']),
-  check('stoNightSrchrApplyYn').exists().bail().notEmpty().bail().isIn(['Y','N']),
-  check('stoNightSrchrStdTm').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
-  check('stoNightSrchrEndTm').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
-  check('stoNightSrchrAmnt').optional().exists().bail().notEmpty().bail().isNumeric(),
-  check('stoLa').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
-  check('stoLo').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
-  check('stoStateCd').exists().bail().notEmpty().bail().isIn(['01','02'])
+  check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('stoBsnsRgnmb','사업자 등록 번호는 필수 입력 입니다. (-)를 제외한 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('stoPassword','비밀번호는 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('stoMtlty','상호는 피루 입력 입니다.').exists().bail().notEmpty(),
+  check('stoBizSeCd','사업자 구분 코드는 (01: 개인 사업자, 02: 법인 사업자)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02']),
+  check('stoRprsntvNm','대표자명은 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('stoBrdYmd','대표자 생년월일은 필수 입력 입니다. YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').if(check('stoBizSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('stoCrprtRgnmb','법인 등록 번호는 필수 입력 입니다. (-)를 제외한 13자리 숫자를 입력해 주세요.').if(check('stoBizSeCd').isIn(['02'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
+  check('stoOpnngYmd','개업년월일은 필수 입력 입니다. YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').exists().bail().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('stoBsnsPlaceAdres','사업장 주소는 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('stoBizcnd','업태는 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('stoInduty','업종은 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('stoCelno','휴대전화 번호는 필수 입력 입니다. (-)를 제외한 숫자로 입력해 주세요.').exists().bail().notEmpty().isNumeric(),
+  check('stoSetSeCd','설정 구분 코드는 (01: 거리, 02: 지역)으로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02']),
+  check('stoNightSrchrApplyYn','야간 할증 적용 여부는 (Y , N)으로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['Y','N']),
+  check('stoNightSrchrStdTm','야간 할증 시작 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
+  check('stoNightSrchrEndTm','야간 할증 종료 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
+  check('stoNightSrchrAmnt','야간 할증 수수료 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric(),
+  check('stoLa','위도는 필수 입력 입니다. 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('stoLo','경도는 필수 입력 입니다. 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('stoStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -72,7 +72,7 @@ router.post('/store', util.isLoggedin, [
   // 상점 등록 여부 검증
   models.store.findOne( { where : { stoBsnsRgnmb: data.stoBsnsRgnmb } } ).then( result => {
     if( result ) {
-      var error = { message : "이미 등록된 사업자 번호 입니다."};      errors.errors= error;
+      var error = { message : "이미 등록된 사업자 등록 번호 입니다."};      errors.errors= error;
       return res.status(400).json( util.successFalse( error ) );
     }
     // 상점 ID 생성
@@ -95,28 +95,28 @@ router.post('/store', util.isLoggedin, [
 
 // 바이크다 상점 수정
 router.put('/store', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('brcofcId').optional().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('stoBsnsRgnmb').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('stoPassword').optional().notEmpty(),
-  check('stoMtlty').optional().notEmpty(),
-  check('stoBizSeCd').optional().notEmpty().bail().isIn(['01','02']),
-  check('stoRprsntvNm').optional().notEmpty(),
-  check('stoBrdYmd').if(check('stoBizSeCd').isIn(['01'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
-  check('stoCrprtRgnmb').if(check('stoBizSeCd').isIn(['02'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
-  check('stoOpnngYmd').optional().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
-  check('stoBsnsPlaceAdres').optional().notEmpty(),
-  check('stoBizcnd').optional().notEmpty(),
-  check('stoInduty').optional().notEmpty(),
-  check('stoCelno').optional().notEmpty().isNumeric(),
-  check('stoSetSeCd').optional().notEmpty().bail().isIn(['01','02']),
-  check('stoNightSrchrApplyYn').optional().notEmpty().bail().isIn(['Y','N']),
-  check('stoNightSrchrStdTm').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
-  check('stoNightSrchrEndTm').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
-  check('stoNightSrchrAmnt').optional().exists().bail().notEmpty().bail().isNumeric(),
-  check('stoLa').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
-  check('stoLo').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
-  check('stoStateCd').optional().notEmpty().bail().isIn(['01','02'])
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').optional().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('stoBsnsRgnmb','사업자 번호는 (-)를 제외한 10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('stoPassword','비밀번호가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoMtlty','상호가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoBizSeCd','사업자 구분 코드는 (01: 개인 사업자, 02: 법인 사업자)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
+  check('stoRprsntvNm','대표자명이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoBrdYmd','대표자 생년월일은 YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').if(check('stoBizSeCd').isIn(['01'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('stoCrprtRgnmb','법인 등록 번호는 (-)를 제외한 13자리 숫자를 입력해 주세요.').if(check('stoBizSeCd').isIn(['02'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
+  check('stoOpnngYmd','개업 생년월일은 YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231).').optional().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('stoBsnsPlaceAdres','사업장 주소가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoBizcnd','업태가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoInduty','업종이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoCelno','휴대 전화 번호는 (-)를 제외한 숫자로 입력해 주세요.').optional().notEmpty().isNumeric(),
+  check('stoSetSeCd','설정 구분 코드는 (01: 거리, 02: 지역)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
+  check('stoNightSrchrApplyYn','야간 할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N']),
+  check('stoNightSrchrStdTm','야간 할증 시작 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
+  check('stoNightSrchrEndTm','야간 할증 종료 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
+  check('stoNightSrchrAmnt','야간 할증 수수료 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric(),
+  check('stoLa','위도는 소수점 20자리 까지 입력 가능 합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('stoLo','경도는 소수점 20자리 까지 입력 가능 합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('stoStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -127,7 +127,7 @@ router.put('/store', util.isLoggedin, [
   // 상점 등록 여부 검증
   models.store.findOne( { where : { stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { message : "존재하지 않는 상점 ID. brcofcId : ' + brcofcId"};
+      var error = { message : "존재 하지 않는 상점 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     models.store.update( data, { where : { stoId: stoId } } ).then( result => {
@@ -143,8 +143,8 @@ router.put('/store', util.isLoggedin, [
 
 // 바이크다 상점 포인트 조회( 상점 ID, 포인트 구분 코드 )
 router.get('/store-point', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('pointSeCd').optional().notEmpty().bail().isIn(['01','02'])
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -164,10 +164,10 @@ router.get('/store-point', util.isLoggedin, [
 });
 // 바이크다 상점 포인트 등록
 router.post('/store-point', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('pointSeCd').exists().bail().notEmpty().bail().isIn(['01','02']),
-  check('pointAmnt').exists().bail().notEmpty().bail().isNumeric(),
-  check('pointNote').optional().notEmpty().bail()
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
+  check('pointAmnt','포인트 금액은 필수 입력 입니다. 원단위로 입력해 주세요.').if(check('brcofcFeeSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric(),
+  check('pointNote','포인트 내용이 입력 되지 않았습니다.').optional().notEmpty().bail()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -181,8 +181,8 @@ router.post('/store-point', util.isLoggedin, [
 
 // 바이크다 상점 할증 조회( 상점 ID, 할증 구분 코드 )
 router.get('/store-surcharge', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('srchrSeCd').optional().notEmpty().bail().isIn(['01','02','03','04'])
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('srchrSeCd','포인트 구분 코드는(01: 비, 02: 눈, 03: 결빙, 04: 기타)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03','04'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -203,10 +203,10 @@ router.get('/store-surcharge', util.isLoggedin, [
 
 // 바이크다 상점 할증 등록
 router.post('/store-surcharge', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('srchrSeCd').exists().bail().notEmpty().bail().isIn(['01','02','03','04']),
-  check('srchrAmnt').exists().bail().notEmpty().bail().isNumeric(),
-  check('srchrApplyYn').exists().bail().notEmpty().bail().isIn(['Y','N'])
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('srchrSeCd','할증 구분 코드는(01: 비, 02: 눈, 03: 결빙, 04: 기타)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04']),
+  check('srchrAmnt','할증 금액은 필수 입력 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric(),
+  check('srchrApplyYn','할증 적용 여부는 (Y , N)으로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['Y','N'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -220,11 +220,11 @@ router.post('/store-surcharge', util.isLoggedin, [
 
 // 바이크다 상점 할증 수정
 router.put('/store-surcharge', util.isLoggedin, [
-  check('srchrSeqNo').exists().bail().notEmpty().bail().isNumeric().bail(),
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('srchrSeCd').optional().notEmpty().bail().isIn(['01','02','03','04']),
-  check('srchrAmnt').optional().notEmpty().bail().isNumeric(),
-  check('srchrApplyYn').optional().notEmpty().bail().isIn(['Y','N'])
+  check('srchrSeqNo','할증 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('srchrSeCd','할증 구분 코드는(01: 비, 02: 눈, 03: 결빙, 04: 기타)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03','04']),
+  check('srchrAmnt','할증 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric(),
+  check('srchrApplyYn','할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -239,7 +239,7 @@ router.put('/store-surcharge', util.isLoggedin, [
   // 상점 할증 등록 여부 검증
   models.store_surcharge.findOne( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { message : "등록 되지 않은 할증 정보"};
+      var error = { message : "등록 되지 않은 할증 정보 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     models.store_surcharge.update( data, { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
@@ -254,8 +254,8 @@ router.put('/store-surcharge', util.isLoggedin, [
 
 // 바이크다 상점 할증 삭제
 router.delete('/store-surcharge', util.isLoggedin, [
-  check('srchrSeqNo').exists().bail().notEmpty().bail().isNumeric().bail(),
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+  check('srchrSeqNo','할증 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -266,7 +266,7 @@ router.delete('/store-surcharge', util.isLoggedin, [
   // 상점 할증 등록 여부 검증
   models.store_surcharge.findAll( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { message : "등록 되지 않은 할증 정보"};
+      var error = { message : "등록 되지 않은 할증 정보 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     models.store_surcharge.destroy( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {

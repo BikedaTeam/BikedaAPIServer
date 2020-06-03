@@ -8,7 +8,7 @@ var { check, validationResult } = require('express-validator');
 
 // 바이크다 지점 API Document
 router.get('/', function( req, res, next ) {
-  res.render('branch', { title: '바이크다 지점 API' });
+  res.render('branch', { title: 'Bikeda 지점 API' });
 });
 
 // 바이크다 지점 전체 목록
@@ -43,23 +43,23 @@ router.get('/branch', util.isLoggedin, function( req, res, next ) {
 
 // 바이크다 지점 등록
 router.post('/branch', util.isLoggedin, [
-  check('brcofcBsnsRgnmb').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('brcofcPassword').exists().bail().notEmpty(),
-  check('brcofcNm').exists().bail().notEmpty(),
-  check('brcofcMtlty').exists().bail().notEmpty(),
-  check('brcofcBizSeCd').exists().bail().notEmpty().bail().isIn(['01','02']),
-  check('brcofcRprsntvNm').exists().bail().notEmpty(),
-  check('brcofcBrdYmd').if(check('brcofcBizSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
-  check('brcofcCrprtRgnmb').if(check('brcofcBizSeCd').isIn(['02'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
-  check('brcofcOpnngYmd').exists().bail().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
-  check('brcofcBsnsPlaceAdres').exists().bail().notEmpty(),
-  check('brcofcBizcnd').exists().bail().notEmpty(),
-  check('brcofcInduty').exists().bail().notEmpty(),
-  check('brcofcCelno').exists().bail().notEmpty().isNumeric(),
-  check('brcofcFeeSeCd').exists().bail().notEmpty().bail().isIn(['01','02']),
-  check('brcofcFeeAmnt').if(check('brcofcFeeSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric(),
-  check('brcofcFeeRate').if(check('brcofcFeeSeCd').isIn(['02'])).exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('brcofcStateCd').exists().bail().notEmpty().bail().isIn(['01','02'])
+  check('brcofcBsnsRgnmb', '사업자 등록 번호는 필수 입력 입니다. (-)를 제외한 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('brcofcPassword', '비밀번호는 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('brcofcNm','지점명은 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('brcofcMtlty','상호는 피루 입력 입니다.').exists().bail().notEmpty(),
+  check('brcofcBizSeCd','사업자 구분 코드는 (01: 개인 사업자, 02: 법인 사업자)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02']),
+  check('brcofcRprsntvNm','대표자명은 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('brcofcBrdYmd','대표자 생년월일은 필수 입력 입니다. YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').if(check('brcofcBizSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('brcofcCrprtRgnmb','법인 등록 번호는 필수 입력 입니다. (-)를 제외한 13자리 숫자를 입력해 주세요.').if(check('brcofcBizSeCd').isIn(['02'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
+  check('brcofcOpnngYmd','개업년월일은 필수 입력 입니다. YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').exists().bail().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('brcofcBsnsPlaceAdres','사업장 주소는 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('brcofcBizcnd','업태는 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('brcofcInduty','업종은 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('brcofcCelno','휴대전화 번호는 필수 입력 입니다. (-)를 제외한 숫자로 입력해 주세요.').exists().bail().notEmpty().isNumeric(),
+  check('brcofcFeeSeCd','수수료 구분 코드는 (01: 정액제, 02: 정률제)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02']),
+  check('brcofcFeeAmnt','수수료 금액은 필수 입력 입니다. 원단위로 입력해 주세요.').if(check('brcofcFeeSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric(),
+  check('brcofcFeeRate','수수료율은 필수 입력 입니다. 소수점 2자리까지 입력 가능 합니다.').if(check('brcofcFeeSeCd').isIn(['02'])).exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
+  check('brcofcStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -67,7 +67,7 @@ router.post('/branch', util.isLoggedin, [
   // 지점 등록 여부 검증
   models.branch.findOne( { where : { brcofcBsnsRgnmb: data.brcofcBsnsRgnmb } } ).then( result => {
     if( result ) {
-      var error = { message : "이미 등록된 사업자 번호 입니다."};
+      var error = { message : "이미 등록된 사업자 등록 번호 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     // 지점 ID 생성
@@ -90,24 +90,24 @@ router.post('/branch', util.isLoggedin, [
 
 // 바이크다 지점 수정
 router.put('/branch', util.isLoggedin, [
-  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('brcofcBsnsRgnmb').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('brcofcPassword').optional().notEmpty(),
-  check('brcofcNm').optional().notEmpty(),
-  check('brcofcMtlty').optional().notEmpty(),
-  check('brcofcBizSeCd').optional().notEmpty().bail().isIn(['01','02']),
-  check('brcofcRprsntvNm').optional().notEmpty(),
-  check('brcofcBrdYmd').if(check('brcofcBizSeCd').isIn(['01'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
-  check('brcofcCrprtRgnmb').if(check('brcofcBizSeCd').isIn(['02'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
-  check('brcofcOpnngYmd').optional().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
-  check('brcofcBsnsPlaceAdres').optional().notEmpty(),
-  check('brcofcBizcnd').optional().notEmpty(),
-  check('brcofcInduty').optional().notEmpty(),
-  check('brcofcCelno').optional().notEmpty().isNumeric(),
-  check('brcofcFeeSeCd').optional().notEmpty().bail().isIn(['01','02']),
-  check('brcofcFeeAmnt').if(check('brcofcFeeSeCd').isIn(['01'])).optional().notEmpty().bail().isNumeric(),
-  check('brcofcFeeRate').if(check('brcofcFeeSeCd').isIn(['02'])).optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('brcofcStateCd').optional().notEmpty().bail().isIn(['01','02'])
+  check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcBsnsRgnmb','사업자 번호는 (-)를 제외한 10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('brcofcPassword','비밀번호가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('brcofcNm','지점명이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('brcofcMtlty', '상호가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('brcofcBizSeCd','사업자 구분 코드는 (01: 개인 사업자, 02: 법인 사업자)로 입력해 주세요.' ).optional().notEmpty().bail().isIn(['01','02']),
+  check('brcofcRprsntvNm','대표자명이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('brcofcBrdYmd','대표자 생년월일은 YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').if(check('brcofcBizSeCd').isIn(['01'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('brcofcCrprtRgnmb','법인 등록 번호는 (-)를 제외한 13자리 숫자를 입력해 주세요.').if(check('brcofcBizSeCd').isIn(['02'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
+  check('brcofcOpnngYmd','개업 생년월일은 YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231).').optional().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('brcofcBsnsPlaceAdres','사업장 주소가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('brcofcBizcnd','업태가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('brcofcInduty','업종이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('brcofcCelno','휴대 전화 번호는 (-)를 제외한 숫자로 입력해 주세요.').optional().notEmpty().isNumeric(),
+  check('brcofcFeeSeCd','수수료 구분 코드는 (01: 정액제, 02: 정률제)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
+  check('brcofcFeeAmnt','수수료 금액은 원단위로 입력해 주세요.').if(check('brcofcFeeSeCd').isIn(['01'])).optional().notEmpty().bail().isNumeric(),
+  check('brcofcFeeRate','수수료율은 소수점 2자리까지 입력 가능 합니다.').if(check('brcofcFeeSeCd').isIn(['02'])).optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
+  check('brcofcStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -119,7 +119,7 @@ router.put('/branch', util.isLoggedin, [
   console.log(brcofcId);
   models.branch.findOne( { where : { brcofcId: brcofcId } } ).then( result => {
     if( !result ) {
-      var error = { message : "존재하지 않는 지점 ID. brcofcId : ' + brcofcId"};
+      var error = { message : "등록 되지 않은 지점 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     models.branch.update( data, { where : { brcofcId: brcofcId } } ).then( result => {
@@ -135,8 +135,8 @@ router.put('/branch', util.isLoggedin, [
 
 // 바이크다 지점 포인트 조회( 지점 ID, 포인트 구분 코드 )
 router.get('/branch-point', util.isLoggedin, [
-  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('pointSeCd').optional().notEmpty().bail().isIn(['01','02'])
+  check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -156,10 +156,10 @@ router.get('/branch-point', util.isLoggedin, [
 });
 // 바이크다 지점 포인트 등록
 router.post('/branch-point', util.isLoggedin, [
-  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('pointSeCd').exists().bail().notEmpty().bail().isIn(['01','02']),
-  check('pointAmnt').exists().bail().notEmpty().bail().isNumeric(),
-  check('pointNote').optional().notEmpty().bail()
+  check('brcofcId','지점 ID는 필수 입력입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
+  check('pointAmnt','포인트 금액은 필수 입력 입니다. 원단위로 입력해 주세요.').if(check('brcofcFeeSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric(),
+  check('pointNote','포인트 내용이 입력 되지 않았습니다.').optional().notEmpty().bail()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -173,8 +173,8 @@ router.post('/branch-point', util.isLoggedin, [
 
 // 바이크다 지점 공유 정보 조회( 공유 ID, 지점 ID )
 router.get('/branch-share', util.isLoggedin, [
-  check('shareId').optional().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('brcofcId').optional().notEmpty().bail().isLength({ min: 5, max: 5 })
+  check('shareId','공유 지점 ID는 Bxxxx 형식으로 입력해 주세요.(ex : B0001)').optional().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId','대상 지점 ID는 Bxxxx 형식으로 입력해 주세요.(ex : B0001)').optional().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -195,9 +195,9 @@ router.get('/branch-share', util.isLoggedin, [
 
 // 바이크다 지점 공유  등록
 router.post('/branch-share', util.isLoggedin, [
-  check('shareId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('shareDelayTime').exists().bail().notEmpty().bail().isLength({ min: 6, max: 6 }).bail().isNumeric(),
+  check('shareId','공유 지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId','대상 지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('shareDelayTime','공유 지연 시간은 필수 입력 입니다. hhmmss 형식으로 입력해 주세요.(ex : 235959)').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 6, max: 6 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -207,7 +207,7 @@ router.post('/branch-share', util.isLoggedin, [
 
   models.branch_share.findAll( { where : data } ).then( result => {
     if( result ) {
-      var error = { message : "이미 등록된 지점 공유 정보"};
+      var error = { message : "이미 등록된 공유 지점 정보 입니다."};
       return res.status(400).json( util.successFalse( error) );
     }
     models.branch_share.create( req.body ).then( result => {
@@ -222,9 +222,9 @@ router.post('/branch-share', util.isLoggedin, [
 
 // 바이크다 지점 공유 수정
 router.put('/branch-share', util.isLoggedin, [
-  check('shareId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('shareDelayTime').exists().bail().notEmpty().bail().isLength({ min: 6, max: 6 }).bail().isNumeric(),
+  check('shareId','공유 지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId','대상 지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('shareDelayTime','공유 지연 시간은 필수 입력 입니다. hhmmss 형식으로 입력해 주세요.(ex : 235959)').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 6, max: 6 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -234,7 +234,7 @@ router.put('/branch-share', util.isLoggedin, [
 
   models.branch_share.findAll( { where : data } ).then( result => {
     if( !result ) {
-      var error = { message : "지점 공유 정보가 등록 되어있지 않습니다."};
+      var error = { message : "등록 되지 않은 공유 지점 입니다."};
       return res.status(400).json( util.successFalse( error) );
     }
     delete req.body.shareId;
@@ -252,8 +252,8 @@ router.put('/branch-share', util.isLoggedin, [
 
 // 바이크다 지점 공유 삭제
 router.delete('/branch-share', util.isLoggedin,  [
-  check('shareId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('brcofcId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+  check('shareId','공유 지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId','대상 지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function ( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -263,7 +263,7 @@ router.delete('/branch-share', util.isLoggedin,  [
 
   models.branch_share.findAll( { where : { shareId: shareId, brcofcId: brcofcId } } ).then( result => {
     if( !result ) {
-      var error = { message : "지점 공유 정보가 등록 되어있지 않습니다."};
+      var error = { message : "등록 되지 않은 공유 지점 입니다."};
       return res.status(400).json( util.successFalse( error) );
     }
     models.branch_share.destroy( { where : { shareId: shareId, brcofcId: brcofcId } } ).then( result => {
