@@ -21,13 +21,18 @@ module.exports = ( sequelize, DataTypes ) => {
       allowNull: false,
       comment : "라이더 명"
     },
+    riderWthdrBankCd : {
+      type: DataTypes.STRING(3),
+      allowNull: true,
+      comment : "라이더 출금 은행 코드"
+    },
     riderWthdrAcnt : {
       type: DataTypes.STRING(255),
       allowNull: true,
       comment : "라이더 출금 계좌"
     },
     riderLoginYn : {
-      type: DataTypes.STRING(1),
+      type: DataTypes.CHAR(1),
       allowNull: false,
       defaultValue: 'N',
       comment : "라이더 로그인 여부"
@@ -45,9 +50,9 @@ module.exports = ( sequelize, DataTypes ) => {
       comment : "라이더 콜 제한 수"
     },
     riderCallDelayTime :{
-      type: DataTypes.STRING(6),
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: '000000',
+      defaultValue: 0,
       comment : "라이더 콜 지연 시간"
     }
   },

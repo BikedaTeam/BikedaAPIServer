@@ -281,7 +281,7 @@ router.delete('/store-surcharge', util.isLoggedin, [
 
 // 바이크다 상점 거리 설정 조회( 상점 ID, 할증 구분 코드 )
 router.get('/store-distance', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -300,10 +300,10 @@ router.get('/store-distance', util.isLoggedin, [
 
 // 바이크다 상점 거리 설정 등록
 router.post('/store-distance', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setStdDstnc').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('setEndDstnc').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('setAmnt').exists().bail().notEmpty().bail().isNumeric()
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('setStdDstnc','시작 거리는 필수 입력 입니다. Km 단위로 소수점 2자리까지 입력 가능합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
+  check('setEndDstnc','종료 거리는 필수 입력 입니다. Km 단위로 소수점 2자리까지 입력 가능합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
+  check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -317,11 +317,11 @@ router.post('/store-distance', util.isLoggedin, [
 
 // 바이크다 상점 거리 설정 수정
 router.put('/store-distance', util.isLoggedin, [
-  check('setSeqNo').exists().bail().notEmpty().bail().isNumeric().bail(),
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setStdDstnc').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('setEndDstnc').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
-  check('setAmnt').optional().notEmpty().bail().isNumeric()
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('setStdDstnc','시작 거리는 Km 단위로 소수점 2자리까지 입력 가능합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
+  check('setEndDstnc','종료 거리는 Km 단위로 소수점 2자리까지 입력 가능합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
+  check('setAmnt','설정 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -336,7 +336,7 @@ router.put('/store-distance', util.isLoggedin, [
   // 상점 거리 설정 등록 여부 검증
   models.store_distance_setting.findOne( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { message : "등록 되지 않은 거리 설정 정보"};
+      var error = { message : "등록 되지 않은 거리 설정 정보 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     models.store_distance_setting.update( data, { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
@@ -351,8 +351,8 @@ router.put('/store-distance', util.isLoggedin, [
 
 // 바이크다 상점 거리 설정 삭제
 router.delete('/store-distance', util.isLoggedin, [
-  check('setSeqNo').exists().bail().notEmpty().bail().isNumeric().bail(),
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -367,7 +367,7 @@ router.delete('/store-distance', util.isLoggedin, [
   // 상점 거리 설정 등록 여부 검증
   models.store_distance_setting.findAll( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { message : "등록 되지 않은 거리 설정 정보"};
+      var error = { message : "등록 되지 않은 거리 설정 정보 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     models.store_distance_setting.destroy( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
@@ -382,7 +382,7 @@ router.delete('/store-distance', util.isLoggedin, [
 
 // 바이크다 상점 지역 설정 조회( 상점 ID )
 router.get('/store-area', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -401,14 +401,14 @@ router.get('/store-area', util.isLoggedin, [
 
 // 바이크다 상점 지역 설정 등록
 router.post('/store-area', util.isLoggedin, [
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setHCd').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('setDCd').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('setPrvnc').exists().bail().notEmpty(),
-  check('setMncpl').exists().bail().notEmpty(),
-  check('setSbmnc').exists().bail().notEmpty(),
-  check('setVlg').optional().notEmpty(),
-  check('setAmnt').exists().bail().notEmpty().bail().isNumeric()
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('setHCd','행정 코드는 필수 입력 입니다. 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setDCd','동 코드는 필수 입력 입니다. 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setPrvnc','시,도는 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('setMncpl','시,군,구는 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('setSbmnc','읍,면,동은 필수 입력 입니다.').exists().bail().notEmpty(),
+  check('setVlg','리가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -422,15 +422,15 @@ router.post('/store-area', util.isLoggedin, [
 
 // 바이크다 상점 지역 설정 수정
 router.put('/store-area', util.isLoggedin, [
-  check('setSeqNo').exists().bail().notEmpty().bail().isNumeric().bail(),
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setHCd').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('setDCd').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('setPrvnc').optional().notEmpty(),
-  check('setMncpl').optional().notEmpty(),
-  check('setSbmnc').optional().notEmpty(),
-  check('setVlg').optional().notEmpty(),
-  check('setAmnt').exists().bail().notEmpty().bail().isNumeric()
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('setHCd','10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setDCd','10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setPrvnc','시,도가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('setMncpl','시,군,구가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('setSbmnc','읍,면,동이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('setVlg','리가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -445,7 +445,7 @@ router.put('/store-area', util.isLoggedin, [
   // 상점 지역 설정 등록 여부 검증
   models.store_area_setting.findOne( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { message : "등록 되지 않은 지역 설정 정보"};
+      var error = { message : "등록 되지 않은 지역 설정 정보 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     models.store_area_setting.update( data, { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
@@ -460,8 +460,8 @@ router.put('/store-area', util.isLoggedin, [
 
 // 바이크다 상점 거리 설정 삭제
 router.delete('/store-area', util.isLoggedin, [
-  check('setSeqNo').exists().bail().notEmpty().bail().isNumeric().bail(),
-  check('stoId').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
@@ -476,7 +476,7 @@ router.delete('/store-area', util.isLoggedin, [
   // 상점 거리 설정 등록 여부 검증
   models.store_area_setting.findAll( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
     if( !result ) {
-      var error = { message : "등록 되지 않은 지역 설정 정보"};
+      var error = { message : "등록 되지 않은 지역 설정 정보 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
     models.store_area_setting.destroy( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
