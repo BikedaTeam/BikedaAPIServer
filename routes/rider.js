@@ -89,7 +89,7 @@ router.put('/rider', util.isLoggedin, [
   check('riderLoginYn','로그인 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().isIn(['Y','N']),
   check('riderMinWthdrAmnt','최소 출금 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric(),
   check('riderCallLimit','콜 제한 수가 입력 되지 않았습니다.').optional().notEmpty().bail().isNumeric(),
-  check('riderCallDelayTime','콜 지연 시간은 초단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric()
+  check('riderCallDelayTime','콜 지연 시간은 초단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric(),
   check('riderStateCd','상태 코드는(01: 정상, 02:해지, 03:휴무)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03'])
 ], function( req, res, next ) {
   var errors = validationResult(req);

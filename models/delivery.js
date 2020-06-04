@@ -33,7 +33,7 @@ module.exports = ( sequelize, DataTypes ) => {
     },
     dlvryCusDetlAdres : {
       type: DataTypes.STRING(1000),
-      allowNull: false,
+      allowNull: true,
       comment : "배달 고객 상세 주소"
     },
     dlvryCusLa : {
@@ -109,12 +109,12 @@ module.exports = ( sequelize, DataTypes ) => {
     },
     riderBrcofcId : {
       type: DataTypes.STRING(5),
-      allowNull: false,
+      allowNull: true,
       comment : "라이더 지점 ID"
     },
     riderId : {
       type: DataTypes.STRING(6),
-      allowNull: false,
+      allowNull: true,
       comment : "라이더 ID"
     }
   },

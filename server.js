@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var authApi = require('./routes/auth');
 var branchApi = require('./routes/branch');
 var storeApi = require('./routes/store');
+var riderApi = require('./routes/rider');
+var deliveryApi = require('./routes/delivery');
 
 var sequelize = require('./models/index').sequelize;
 var app = express();
@@ -44,6 +46,8 @@ app.use(function(req, res, next) {
 app.use('/api/auth', authApi);
 app.use('/api/branch', branchApi);
 app.use('/api/store', storeApi);
+app.use('/api/rider', riderApi);
+app.use('/api/delivery', deliveryApi);
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
