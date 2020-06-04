@@ -54,6 +54,11 @@ module.exports = ( sequelize, DataTypes ) => {
       allowNull: false,
       defaultValue: 0,
       comment : "라이더 콜 지연 시간"
+    },
+    riderStateCd : {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+      comment : "라이더 상태 코드"
     }
   },
   {

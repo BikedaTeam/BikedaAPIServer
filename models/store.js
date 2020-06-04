@@ -92,7 +92,7 @@ module.exports = ( sequelize, DataTypes ) => {
       comment : "상점 설정 구분 코드"
     },
     stoNightSrchrApplyYn : {
-      type: DataTypes.STRING(1),
+      type: DataTypes.CHAR(1),
       allowNull: false,
       defaultValue: 'N',
       comment : "상점 야간 할증 적용 여부"

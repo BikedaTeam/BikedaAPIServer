@@ -30,7 +30,7 @@ module.exports = ( sequelize, DataTypes ) => {
       comment : "할증 금액"
     },
     srchrApplyYn : {
-      type: DataTypes.STRING(1),
+      type: DataTypes.CHAR(1),
       allowNull: false,
       defaultValue: 'N',
       comment : "할증 적용 여부"

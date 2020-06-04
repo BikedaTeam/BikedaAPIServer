@@ -5,31 +5,38 @@ var jwt = require('jsonwebtoken');
 var models = require('../models');
 var { check, validationResult } = require('express-validator');
 
-// 바이크다 라이더 API Document
+// 바이크다 주문 API Document
 router.get('/', function( req, res, next ) {
-  res.render('rider', { title: 'Bikeda 라이더 API' });
+  res.render('delivery', { title: 'Bikeda 주문 API' });
 });
 
-// 바이크다 라이더 전체 목록
-router.get('/riders', util.isLoggedin, function( req, res, next ) {
-  models.rider.findAll().then( result => {
+// 바이크다 배달 전체 목록
+router.get('/deliveries', util.isLoggedin, function( req, res, next ) {
+  models.delivery.findAll().then( result => {
     return res.status(200).json( util.successTrue( result ) );
   }).catch( err => {
     return res.status(400).json( util.successFalse( err ) );
   });
 });
 
-// 바이크다 라이더 조회( 라이더 핸드폰번호, 라이더 명, 지점 ID )
-router.get('/rider', util.isLoggedin, function( req, res, next ) {
-  var reqParam = req.query || '';
-  var riderCelno  = reqParam.riderCelno || '';
-  var riderNm     = reqParam.riderNm || '';
-  var brcofcId    = reqParam.brcofcId || '';
+// 바이크다 배달 조회( 라이더 핸드폰번호, 라이더 명, 지점 ID )
+router.get('/delivery', util.isLoggedin, function( req, res, next ) {
+  var reqParam      = req.query || '';
+  var stoBrcofcId   = reqParam.stoBrcofcId || '';
+  var stoId         = reqParam.stoId || '';
+  var riderBrcofcId = reqParam.riderBrcofcId || '';
+  var riderId       = reqParam.riderId || '';
+  var dlvryRecvDt   = reqParam.dlvryRecvDt || '';
+  var dlvryStateCd  = reqParam.dlvryStateCd || '';
 
-  var query = 'select * from tb_riders where 1=1 ';
-  if( riderCelno ) query += 'and riderCelno like "%' + riderCelno + '%" ';
-  if( riderNm )    query += 'and riderNm like "%' + riderNm + '%" ';
-  if( brcofcId )   query += 'and brcofcId = ' + brcofcId;
+  var query = 'select * from tb_deliveries where 1=1 ';
+  if( stoBrcofcId )   query += 'and stoBrcofcId = ' + stoBrcofcId;
+  if( stoId )         query += 'and stoId = ' + stoId;
+  if( riderBrcofcId ) query += 'and riderBrcofcId = ' + riderBrcofcId;
+  if( riderId )       query += 'and riderId = ' + riderId;
+  if( dlvryRecvDt )   query += 'between dlvryStateCd = ' + dlvryStateCd;
+  if( dlvryStateCd )  query += 'and dlvryStateCd = ' + dlvryStateCd;
+
 
   models.sequelize.query( query ).spread( function ( result, metadata ) {
     return res.status(200).json( util.successTrue( result ) );

@@ -27,6 +27,6 @@ db.rider = require('./rider')(sequelize, Sequelize);
 db.rider_point = require('./rider_point')(sequelize, Sequelize);
 db.rider_location = require('./rider_location')(sequelize, Sequelize);
 
-db.order = require('./order')(sequelize, Sequelize);
+db.delivery = require('./delivery')(sequelize, Sequelize);
 
 module.exports = db;
