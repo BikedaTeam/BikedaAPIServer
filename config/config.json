@@ -11,15 +11,15 @@
     "username": "bikeda",
     "password": "bikeda",
     "database": "bikeda",
-    "host": "127.0.0.1",
+    "host": "192.168.0.35",
     "dialect": "mysql",
     "operatorsAliases": false
   },
   "production": {
-    "username": "bikeda",
-    "password": "bikeda",
-    "database": "bikeda",
-    "host": "127.0.0.1",
+    "username": "djaqoek",
+    "password": "djaqoek!!11",
+    "database": "dbdjaqoek",
+    "host": "211.47.75.102",
     "dialect": "mysql",
     "operatorsAliases": false
   }
