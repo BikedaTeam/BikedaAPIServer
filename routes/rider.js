@@ -52,7 +52,7 @@ router.post('/rider', util.isLoggedin, [
   check('riderStateCd','상태 코드는(01: 정상, 02:해지, 03:휴무)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   var data = req.body;
   // 라이더 등록 여부 검증
   models.rider.findOne( { where : { riderCelno: data.riderCelno } } ).then( result => {
@@ -93,7 +93,7 @@ router.put('/rider', util.isLoggedin, [
   check('riderStateCd','상태 코드는(01: 정상, 02:해지, 03:휴무)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   var riderId = data.riderId;
@@ -121,7 +121,7 @@ router.get('/rider-point', util.isLoggedin, [
   check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var riderId      = reqParam.riderId || '';
@@ -144,7 +144,7 @@ router.post('/rider-point', util.isLoggedin, [
   check('pointNote','포인트 내용이 입력 되지 않았습니다.').optional().notEmpty().bail()
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.rider_point.create( req.body ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -158,7 +158,7 @@ router.get('/rider-location', util.isLoggedin, [
   check('riderId','지점 ID는 필수 입력 입니다. Rxxxxx 형식으로 입력해 주세요.(ex : R00001)').exists().bail().notEmpty().bail().isLength({ min: 6, max: 6 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var riderId      = reqParam.riderId || '';
@@ -179,7 +179,7 @@ router.post('/rider-location', util.isLoggedin, [
   check('riderLo','경도는 필수 입력 입니다. 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   var data = req.body;
   // 라이더 위치 등록 여부 검증
   models.rider_location.findOne( { where : { riderId: data.riderId } } ).then( result => {
@@ -204,7 +204,7 @@ router.put('/rider-location', util.isLoggedin, [
   check('riderLo','경도는 필수 입력 입니다. 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   var data = req.body;
   var riderId = data.riderId;
   delete data.riderId;

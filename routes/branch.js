@@ -62,7 +62,7 @@ router.post('/branch', util.isLoggedin, [
   check('brcofcStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   var data = req.body;
   // 지점 등록 여부 검증
   models.branch.findOne( { where : { brcofcBsnsRgnmb: data.brcofcBsnsRgnmb } } ).then( result => {
@@ -110,7 +110,7 @@ router.put('/branch', util.isLoggedin, [
   check('brcofcStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   var brcofcId = data.brcofcId;
@@ -139,7 +139,7 @@ router.get('/branch-point', util.isLoggedin, [
   check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var brcofcId      = reqParam.brcofcId || '';
@@ -162,7 +162,7 @@ router.post('/branch-point', util.isLoggedin, [
   check('pointNote','포인트 내용이 입력 되지 않았습니다.').optional().notEmpty().bail()
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.branch_point.create( req.body ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -177,7 +177,7 @@ router.get('/branch-share', util.isLoggedin, [
   check('brcofcId','대상 지점 ID는 Bxxxx 형식으로 입력해 주세요.(ex : B0001)').optional().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var shareId     = reqParam.shareId || '';
@@ -200,7 +200,7 @@ router.post('/branch-share', util.isLoggedin, [
   check('shareDelayTime','공유 지연 시간은 필수 입력 입니다. hhmmss 형식으로 입력해 주세요.(ex : 235959)').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 6, max: 6 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   delete data.shareDelayTime;
@@ -227,7 +227,7 @@ router.put('/branch-share', util.isLoggedin, [
   check('shareDelayTime','공유 지연 시간은 필수 입력 입니다. hhmmss 형식으로 입력해 주세요.(ex : 235959)').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 6, max: 6 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   delete data.shareDelayTime;
@@ -256,7 +256,7 @@ router.delete('/branch-share', util.isLoggedin,  [
   check('brcofcId','대상 지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function ( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var shareId = req.body.shareId;
   var brcofcId = req.body.brcofcId;

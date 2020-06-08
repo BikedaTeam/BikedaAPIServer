@@ -65,7 +65,7 @@ router.post('/delivery', util.isLoggedin, [
   check('dlvryStateCd','상태 코드는(01: 요청, 02: 배차, 03: 배달중, 04: 배달완료, 05: 취소)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04','05'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   var data = req.body;
   // 배달 번호 생성
   var query = 'select cast( concat("' + data.stoId + '","O", date_format(now(), "%Y%m%d"), lpad( concat( ifnull( max( cast( substr( dlvryNo, 15 ) AS unsigned ) ) , 0 ) + 1 ), 5, "0" ) ) as char ) as dlvryNo from tb_deliveries where stoId = "' + data.stoId + '" and date_format(dlvryRecvDt, "%Y%m%d") = date_format(now(), "%Y%m%d")' ;
@@ -102,7 +102,7 @@ router.put('/delivery', util.isLoggedin, [
   check('dlvryStateCd','상태 코드는(01: 요청, 02: 배차, 03: 배달중, 04: 배달완료, 05: 취소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03','04','05'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   var data = req.body;
   var dlvryNo = data.dlvryNo;
   delete data.dlvryNo;

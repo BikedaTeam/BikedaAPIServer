@@ -20,10 +20,11 @@ util.successFalse = function(err){
 };
 
 util.parseError = function(errors){
-  console.log(errors);
   if( errors.errors ) {
+    console.log(errors.errors[0].msg);
     return errors.errors[0].msg;
   } else if( errors.message ) {
+    console.log(errors.message);
     return errors.message;
   } else {
     return "system error";

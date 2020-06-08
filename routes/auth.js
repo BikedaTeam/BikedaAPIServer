@@ -16,7 +16,7 @@ router.post('/admin', [
   check('adminPassword', 'ID / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   var payload = {
     id : req.body.adminId
   };
@@ -34,7 +34,7 @@ router.post('/branch', [
   check('brcofcPassword', '사업자 등록 번호 / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.branch.findOne( { where : { brcofcBsnsRgnmb : req.body.brcofcBsnsRgnmb, brcofcPassword : req.body.brcofcPassword } } ).then( result => {
     if( !result ){
@@ -61,7 +61,7 @@ router.post('/store', [
   check('stoPassword', '사업자 등록 번호 / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.store.findOne( { where : { stoBsnsRgnmb : req.body.stoBsnsRgnmb, stoPassword : req.body.stoPassword } } ).then( result => {
     if( !result ){
@@ -88,7 +88,7 @@ router.post('/rider', [
   check('riderCelno', '휴대전화 번호는 필수 입력 입니다').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.rider.findOne( { where : { riderCelno : req.body.riderCelno } } ).then( result => {
     if( !result ){
@@ -114,7 +114,7 @@ router.post('/re-admin', [
   check('adminId', 'ID는 필수 입력 입니다..').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   var payload = {
     id : req.body.adminId
   };
@@ -131,7 +131,7 @@ router.post('/re-branch', [
   check('brcofcBsnsRgnmb', '사업자 등록 번호는 필수 입력 입니다.').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.branch.findOne( { where : { brcofcBsnsRgnmb : req.body.brcofcBsnsRgnmb } } ).then( result => {
     if( !result ){
@@ -157,7 +157,7 @@ router.post('/re-store', [
   check('stoBsnsRgnmb', '사업자 등록 번호는 필수 입력 입니다.').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.store.findOne( { where : { stoBsnsRgnmb : req.body.stoBsnsRgnmb } } ).then( result => {
     if( !result ){
@@ -182,7 +182,7 @@ router.post('/re-rider', [
   check('riderCelno', '휴대전화 번호는 필수 입력 입니다.').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.rider.findOne( { where : { riderCelno : req.body.riderCelno } } ).then( result => {
     if( !result ){

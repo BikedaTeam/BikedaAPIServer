@@ -66,7 +66,7 @@ router.post('/store', util.isLoggedin, [
   check('stoStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   // 상점 등록 여부 검증
@@ -119,7 +119,7 @@ router.put('/store', util.isLoggedin, [
   check('stoStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   var stoId = data.stoId;
@@ -147,7 +147,7 @@ router.get('/store-point', util.isLoggedin, [
   check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var stoId      = reqParam.stoId || '';
@@ -170,7 +170,7 @@ router.post('/store-point', util.isLoggedin, [
   check('pointNote','포인트 내용이 입력 되지 않았습니다.').optional().notEmpty().bail()
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.branch_point.create( req.body ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -185,7 +185,7 @@ router.get('/store-surcharge', util.isLoggedin, [
   check('srchrSeCd','포인트 구분 코드는(01: 비, 02: 눈, 03: 결빙, 04: 기타)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03','04'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var stoId      = reqParam.stoId || '';
@@ -209,7 +209,7 @@ router.post('/store-surcharge', util.isLoggedin, [
   check('srchrApplyYn','할증 적용 여부는 (Y , N)으로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['Y','N'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.store_surcharge.create( req.body ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -227,7 +227,7 @@ router.put('/store-surcharge', util.isLoggedin, [
   check('srchrApplyYn','할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   var srchrSeqNo = data.srchrSeqNo;
@@ -258,7 +258,7 @@ router.delete('/store-surcharge', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var srchrSeqNo = req.body.srchrSeqNo;
   var stoId = req.body.stoId;
@@ -284,7 +284,7 @@ router.get('/store-distance', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var stoId     = reqParam.stoId || '';
@@ -306,7 +306,7 @@ router.post('/store-distance', util.isLoggedin, [
   check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.store_distance_setting.create( req.body ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -324,7 +324,7 @@ router.put('/store-distance', util.isLoggedin, [
   check('setAmnt','설정 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   var setSeqNo = data.setSeqNo;
@@ -355,7 +355,7 @@ router.delete('/store-distance', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   var setSeqNo = data.setSeqNo;
@@ -385,7 +385,7 @@ router.get('/store-area', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
   var stoId     = reqParam.stoId || '';
@@ -411,7 +411,7 @@ router.post('/store-area', util.isLoggedin, [
   check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   models.store_area_setting.create( req.body ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -433,7 +433,7 @@ router.put('/store-area', util.isLoggedin, [
   check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   var setSeqNo = data.setSeqNo;
@@ -464,7 +464,7 @@ router.delete('/store-area', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
 ], function( req, res, next ) {
   var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
   var setSeqNo = data.setSeqNo;
