@@ -145,7 +145,7 @@ router.get('/branch-point', util.isLoggedin, [
   var brcofcId      = reqParam.brcofcId || '';
   var pointSeCd     = reqParam.pointSeCd || '';
 
-  var where = {}
+  var where = {};
   where.brcofcId = brcofcId;
   if( pointSeCd ) where.pointSeCd = pointSeCd;
   models.branch_point.findAll( { where : where } ).then( result => {
@@ -183,7 +183,7 @@ router.get('/branch-share', util.isLoggedin, [
   var shareId     = reqParam.shareId || '';
   var brcofcId    = reqParam.brcofcId || '';
 
-  var where = {}
+  var where = {};
   if( shareId ) where.shareId = shareId;
   if( brcofcId ) where.brcofcId = brcofcId;
   models.branch_share.findAll( { where : where } ).then( result => {

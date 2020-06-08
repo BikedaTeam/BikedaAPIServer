@@ -25,7 +25,7 @@ router.post('/admin', [
   jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
     if(err) return res.status(400).json(util.successFalse(err));
     res.status(200).json(util.successTrue(token));
-  })
+  });
 });
 
 // 지점 로그인 인증 및 토큰 생성
@@ -123,7 +123,7 @@ router.post('/re-admin', [
   jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
     if(err) return res.status(400).json(util.successFalse(err));
     res.status(200).json(util.successTrue(token));
-  })
+  });
 });
 
 // 지점 인증 토큰 재생성

@@ -153,7 +153,7 @@ router.get('/store-point', util.isLoggedin, [
   var stoId      = reqParam.stoId || '';
   var pointSeCd  = reqParam.pointSeCd || '';
 
-  var where = {}
+  var where = {};
   where.stoId = stoId;
   if( pointSeCd ) where.pointSeCd = pointSeCd;
   models.branch_point.findAll( { where : where } ).then( result => {
@@ -191,7 +191,7 @@ router.get('/store-surcharge', util.isLoggedin, [
   var stoId      = reqParam.stoId || '';
   var srchrSeCd  = reqParam.srchrSeCd || '';
 
-  var where = {}
+  var where = {};
   where.stoId = stoId;
   if( srchrSeCd ) where.srchrSeCd = srchrSeCd;
   models.store_surcharge.findAll( { where : where } ).then( result => {
@@ -289,7 +289,7 @@ router.get('/store-distance', util.isLoggedin, [
   var reqParam = req.query || '';
   var stoId     = reqParam.stoId || '';
 
-  var where = {}
+  var where = {};
   where.stoId = stoId;
   models.store_distance_setting.findAll( { where : where } ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -390,7 +390,7 @@ router.get('/store-area', util.isLoggedin, [
   var reqParam = req.query || '';
   var stoId     = reqParam.stoId || '';
 
-  var where = {}
+  var where = {};
   where.stoId = stoId;
   models.store_area_setting.findAll( { where : where } ).then( result => {
     return res.status(200).json( util.successTrue( result ) );

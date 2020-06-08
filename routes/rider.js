@@ -127,7 +127,7 @@ router.get('/rider-point', util.isLoggedin, [
   var riderId      = reqParam.riderId || '';
   var pointSeCd     = reqParam.pointSeCd || '';
 
-  var where = {}
+  var where = {};
   where.riderId = riderId;
   if( pointSeCd ) where.pointSeCd = pointSeCd;
   models.rider_point.findAll( { where : where } ).then( result => {
@@ -163,7 +163,7 @@ router.get('/rider-location', util.isLoggedin, [
   var reqParam = req.query || '';
   var riderId      = reqParam.riderId || '';
 
-  var where = {}
+  var where = {};
   where.riderId = riderId;
   models.rider_location.findAll( { where : where } ).then( result => {
     return res.status(200).json( util.successTrue( result ) );
@@ -206,13 +206,15 @@ router.put('/rider-location', util.isLoggedin, [
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.json(util.successFalse(errors));
   var data = req.body;
+  var riderId = data.riderId;
+  delete data.riderId;
   // 라이더 위치 등록 여부 검증
-  models.rider_location.findOne( { where : { riderId: data.riderId } } ).then( result => {
+  models.rider_location.findOne( { where : { riderId: riderId } } ).then( result => {
     if( !result ) {
       var error = { message : "등록 되지 않은 라이더 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
-    models.rider_location.update( data, { where : { riderId: data.riderId } } ).then( result => {
+    models.rider_location.update( data, { where : { riderId: riderId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
     }).catch( err => {
       return res.status(400).json( util.successFalse( err ) );
