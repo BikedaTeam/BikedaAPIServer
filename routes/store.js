@@ -46,7 +46,7 @@ router.post('/store', util.isLoggedin, [
   check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('stoBsnsRgnmb','사업자 등록 번호는 필수 입력 입니다. (-)를 제외한 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
   check('stoPassword','비밀번호는 필수 입력 입니다.').exists().bail().notEmpty(),
-  check('stoMtlty','상호는 피루 입력 입니다.').exists().bail().notEmpty(),
+  check('stoMtlty','상호는 필수 입력 입니다.').exists().bail().notEmpty(),
   check('stoBizSeCd','사업자 구분 코드는 (01: 개인 사업자, 02: 법인 사업자)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02']),
   check('stoRprsntvNm','대표자명은 필수 입력 입니다.').exists().bail().notEmpty(),
   check('stoBrdYmd','대표자 생년월일은 필수 입력 입니다. YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').if(check('stoBizSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
