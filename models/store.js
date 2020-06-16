@@ -73,13 +73,8 @@ module.exports = ( sequelize, DataTypes ) => {
     },
     stoTelno : {
       type: DataTypes.STRING(255),
-      allowNull: true,
+      allowNull: false,
       comment : "상점 연락처"
-    },
-    stoCelno : {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      comment : "상점 핸드폰"
     },
     stoVrtlAcnt : {
       type: DataTypes.STRING(255),

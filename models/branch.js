@@ -73,13 +73,8 @@ module.exports = ( sequelize, DataTypes ) => {
     },
     brcofcTelno : {
       type: DataTypes.STRING(255),
-      allowNull: true,
+      allowNull: false,
       comment : "지점 연락처"
-    },
-    brcofcCelno : {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      comment : "지점 핸드폰"
     },
     brcofcVrtlAcnt : {
       type: DataTypes.STRING(255),
