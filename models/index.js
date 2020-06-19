@@ -22,6 +22,8 @@ db.store_point = require('./store_point')(sequelize, Sequelize);
 db.store_surcharge = require('./store_surcharge')(sequelize, Sequelize);
 db.store_area_setting = require('./store_area_setting')(sequelize, Sequelize);
 db.store_distance_setting = require('./store_distance_setting')(sequelize, Sequelize);
+db.store_special_setting = require('./store_special_setting')(sequelize, Sequelize);
+db.store_special_location = require('./store_special_location')(sequelize, Sequelize);
 
 db.rider = require('./rider')(sequelize, Sequelize);
 db.rider_point = require('./rider_point')(sequelize, Sequelize);

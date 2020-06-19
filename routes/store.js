@@ -402,7 +402,6 @@ router.get('/store-area', util.isLoggedin, [
 // 바이크다 상점 지역 설정 등록
 router.post('/store-area', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setHCd','행정 코드는 필수 입력 입니다. 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
   check('setDCd','동 코드는 필수 입력 입니다. 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
   check('setPrvnc','시,도는 필수 입력 입니다.').exists().bail().notEmpty(),
   check('setMncpl','시,군,구는 필수 입력 입니다.').exists().bail().notEmpty(),
@@ -424,13 +423,12 @@ router.post('/store-area', util.isLoggedin, [
 router.put('/store-area', util.isLoggedin, [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setHCd','10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
   check('setDCd','10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
   check('setPrvnc','시,도가 입력 되지 않았습니다.').optional().notEmpty(),
   check('setMncpl','시,군,구가 입력 되지 않았습니다.').optional().notEmpty(),
   check('setSbmnc','읍,면,동이 입력 되지 않았습니다.').optional().notEmpty(),
   check('setVlg','리가 입력 되지 않았습니다.').optional().notEmpty(),
-  check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
+  check('setAmnt','설정 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
@@ -480,6 +478,204 @@ router.delete('/store-area', util.isLoggedin, [
       return res.status(400).json( util.successFalse( error ) );
     }
     models.store_area_setting.destroy( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+      return res.status(201).json( util.successTrue( result ) );
+    }).catch( err => {
+      return res.status(400).json( util.successFalse( err ) );
+    });
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+
+// 바이크다 상점 특별 설정 조회( 상점 ID )
+router.get('/store-special', util.isLoggedin, [
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  var reqParam = req.query || '';
+  var stoId     = reqParam.stoId || '';
+
+  var where = {};
+  where.stoId = stoId;
+  models.store_special_setting.findAll( { where : where } ).then( result => {
+    return res.status(200).json( util.successTrue( result ) );
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+// 바이크다 상점 특별 설정 등록
+router.post('/store-special', util.isLoggedin, [
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  models.store_special_setting.create( req.body ).then( result => {
+    return res.status(200).json( util.successTrue( result ) );
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+// 바이크다 상점 특수 설정 수정
+router.put('/store-special', util.isLoggedin, [
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('setAmnt','설정 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric()
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  var data = req.body;
+  var setSeqNo = data.setSeqNo;
+  var stoId = data.stoId;
+
+  delete data.setSeqNo;
+  delete data.stoId;
+
+  // 상점 특수 설정 등록 여부 검증
+  models.store_special_setting.findOne( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+    if( !result ) {
+      var error = { message : "등록 되지 않은 특수 설정 정보 입니다."};
+      return res.status(400).json( util.successFalse( error ) );
+    }
+    models.store_special_setting.update( data, { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+      return res.status(201).json( util.successTrue( result ) );
+    }).catch( err => {
+      return res.status(400).json( util.successFalse( err ) );
+    });
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+// 바이크다 상점 특수 설정 삭제
+router.delete('/store-special', util.isLoggedin, [
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  var data = req.body;
+  var setSeqNo = data.setSeqNo;
+  var stoId = data.stoId;
+
+  delete data.setSeqNo;
+  delete data.stoId;
+
+  // 상점 특수 설정 등록 여부 검증
+  models.store_special_setting.findAll( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+    if( !result ) {
+      var error = { message : "등록 되지 않은 특수 설정 정보 입니다."};
+      return res.status(400).json( util.successFalse( error ) );
+    }
+    models.store_special_setting.destroy( { where : { setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+      return res.status(201).json( util.successTrue( result ) );
+    }).catch( err => {
+      return res.status(400).json( util.successFalse( err ) );
+    });
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+
+// 바이크다 상점 특별 좌표 조회( 설정 일련번호, 상점 ID )
+router.get('/store-location', util.isLoggedin, [
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  var reqParam = req.query || '';
+  var stoId     = reqParam.stoId || '';
+
+  var where = {};
+  where.stoId = stoId;
+  models.store_special_location.findAll( { where : where } ).then( result => {
+    return res.status(200).json( util.successTrue( result ) );
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+// 바이크다 상점 특별 좌표 등록
+router.post('/store-location', util.isLoggedin, [
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('lctnLa','위도는 필수 입력 입니다. 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('lctnLo','경도는 필수 입력 입니다. 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  models.store_special_location.create( req.body ).then( result => {
+    return res.status(200).json( util.successTrue( result ) );
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+// 바이크다 상점 특수 좌표 수정
+router.put('/store-location', util.isLoggedin, [
+  check('lctnSeqNo','좌표 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('lctnLa','위도는 소수점 20자리 까지 입력 가능 합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('lctnLo','경도는 소수점 20자리 까지 입력 가능 합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  var data = req.body;
+  var lctnSeqNo = data.lctnSeqNo;
+  var setSeqNo = data.setSeqNo;
+  var stoId = data.stoId;
+
+  delete data.lctnSeqNo;
+  delete data.setSeqNo;
+  delete data.stoId;
+
+  // 상점 특수 설정 등록 여부 검증
+  models.store_special_location.findOne( { where : { lctnSeqNo: lctnSeqNo, setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+    if( !result ) {
+      var error = { message : "등록 되지 않은 특수 좌표 정보 입니다."};
+      return res.status(400).json( util.successFalse( error ) );
+    }
+    models.store_special_location.update( data, { where : { lctnSeqNo: lctnSeqNo, setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+      return res.status(201).json( util.successTrue( result ) );
+    }).catch( err => {
+      return res.status(400).json( util.successFalse( err ) );
+    });
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+// 바이크다 상점 특수 좌표 삭제
+router.delete('/store-location', util.isLoggedin, [
+  check('lctnSeqNo','좌표 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  var data = req.body;
+  var lctnSeqNo = data.lctnSeqNo;
+  var setSeqNo = data.setSeqNo;
+  var stoId = data.stoId;
+
+  delete data.lctnSeqNo;
+  delete data.setSeqNo;
+  delete data.stoId;
+
+  // 상점 특수 좌표 등록 여부 검증
+  models.store_special_location.findAll( { where : { lctnSeqNo : lctnSeqNo, setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
+    if( !result ) {
+      var error = { message : "등록 되지 않은 특수 좌표 정보 입니다."};
+      return res.status(400).json( util.successFalse( error ) );
+    }
+    models.store_special_location.destroy( { where : { lctnSeqNo : lctnSeqNo, setSeqNo : setSeqNo, stoId: stoId } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
     }).catch( err => {
       return res.status(400).json( util.successFalse( err ) );

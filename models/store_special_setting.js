@@ -1,5 +1,5 @@
 module.exports = ( sequelize, DataTypes ) => {
-  return sequelize.define( 'tb_store_area_setting', {
+  return sequelize.define( 'tb_store_special_setting', {
     setSeqNo : {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -13,30 +13,10 @@ module.exports = ( sequelize, DataTypes ) => {
       primaryKey : true,
       comment : "상점 ID"
     },
-    setDCd : {
-      type: DataTypes.STRING(10),
-      allowNull: true,
-      comment : "상점 동별 코드"
-    },
-    setPrvnc :{
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      comment : "설정 시도"
-    },
-    setMncpl :{
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      comment : "설정 시군구"
-    },
-    setSbmnc :{
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      comment : "설정 읍면동"
-    },
-    setVlg :{
+    setNm : {
       type: DataTypes.STRING(100),
       allowNull: true,
-      comment : "설정 리"
+      comment : "설정 내용"
     },
     setAmnt :{
       type: DataTypes.INTEGER,
