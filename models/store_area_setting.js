@@ -13,10 +13,10 @@ module.exports = ( sequelize, DataTypes ) => {
       primaryKey : true,
       comment : "상점 ID"
     },
-    setDCd : {
+    setHCd : {
       type: DataTypes.STRING(10),
       allowNull: true,
-      comment : "상점 동별 코드"
+      comment : "상점 행정 코드"
     },
     setPrvnc :{
       type: DataTypes.STRING(100),
