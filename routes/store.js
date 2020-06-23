@@ -402,11 +402,11 @@ router.get('/store-area', util.isLoggedin, [
 // 바이크다 상점 지역 설정 등록
 router.post('/store-area', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setHCd','행정 코드는 필수 입력 입니다. 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('setPrvnc','시,도는 필수 입력 입니다.').exists().bail().notEmpty(),
-  check('setMncpl','시,군,구는 필수 입력 입니다.').exists().bail().notEmpty(),
-  check('setSbmnc','읍,면,동은 필수 입력 입니다.').exists().bail().notEmpty(),
-  check('setVlg','리가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('setDCd','법정동 코드는 필수 입력 입니다. 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setSdCd','시,도 코드는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric(),
+  check('setSggCd','시,군,구 코드는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric(),
+  check('setEmdCd','읍,면,동 코드는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric(),
+  check('setRiCd','리 코드는 필수 입력 입니다.').optional().notEmpty().bail().isNumeric(),
   check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);
@@ -423,11 +423,11 @@ router.post('/store-area', util.isLoggedin, [
 router.put('/store-area', util.isLoggedin, [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('setHCd','10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
-  check('setPrvnc','시,도가 입력 되지 않았습니다.').optional().notEmpty(),
-  check('setMncpl','시,군,구가 입력 되지 않았습니다.').optional().notEmpty(),
-  check('setSbmnc','읍,면,동이 입력 되지 않았습니다.').optional().notEmpty(),
-  check('setVlg','리가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('setDCd','10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('setSdCd','시,도 코드가 입력 되지 않았습니다.').optional().notEmpty().bail().isNumeric(),
+  check('setSggCd','시,군,구 코드가 입력 되지 않았습니다.').optional().notEmpty().bail().isNumeric(),
+  check('setEmdCd','읍,면,동 코드가 입력 되지 않았습니다.').optional().notEmpty().bail().isNumeric(),
+  check('setRiCd','리 코드가 입력 되지 않았습니다.').optional().notEmpty().bail().isNumeric(),
   check('setAmnt','설정 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
   var errors = validationResult(req);

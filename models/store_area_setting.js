@@ -13,30 +13,30 @@ module.exports = ( sequelize, DataTypes ) => {
       primaryKey : true,
       comment : "상점 ID"
     },
-    setHCd : {
+    setSdCd :{
+      type: DataTypes.STRING(10),
+      allowNull: false,
+      comment : "설정 시도 코드"
+    },
+    setSggCd :{
+      type: DataTypes.STRING(10),
+      allowNull: false,
+      comment : "설정 시군구 코드"
+    },
+    setEmdCd :{
+      type: DataTypes.STRING(10),
+      allowNull: false,
+      comment : "설정 읍면동 코드"
+    },
+    setRiCd :{
       type: DataTypes.STRING(10),
       allowNull: true,
-      comment : "상점 행정 코드"
-    },
-    setPrvnc :{
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      comment : "설정 시도"
-    },
-    setMncpl :{
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      comment : "설정 시군구"
-    },
-    setSbmnc :{
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      comment : "설정 읍면동"
-    },
-    setVlg :{
-      type: DataTypes.STRING(100),
-      allowNull: true,
       comment : "설정 리"
+    },
+    setDCd : {
+      type: DataTypes.STRING(10),
+      allowNull: true,
+      comment : "상점 법정동 코드"
     },
     setAmnt :{
       type: DataTypes.INTEGER,

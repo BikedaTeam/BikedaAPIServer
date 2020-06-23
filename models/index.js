@@ -31,4 +31,12 @@ db.rider_location = require('./rider_location')(sequelize, Sequelize);
 
 db.delivery = require('./delivery')(sequelize, Sequelize);
 
+db.sido = require('./sido')(sequelize, Sequelize);
+db.sigungu = require('./sigungu')(sequelize, Sequelize);
+db.emd = require('./emd')(sequelize, Sequelize);
+db.ri = require('./ri')(sequelize, Sequelize);
+db.coordinate = require('./coordinate')(sequelize, Sequelize);
+
+
+
 module.exports = db;
