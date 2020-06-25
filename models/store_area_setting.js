@@ -33,11 +33,6 @@ module.exports = ( sequelize, DataTypes ) => {
       allowNull: true,
       comment : "설정 리"
     },
-    setDCd : {
-      type: DataTypes.STRING(10),
-      allowNull: true,
-      comment : "상점 법정동 코드"
-    },
     setAmnt :{
       type: DataTypes.INTEGER,
       allowNull: false,
