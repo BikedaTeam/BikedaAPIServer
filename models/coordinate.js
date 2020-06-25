@@ -1,12 +1,5 @@
 module.exports = ( sequelize, DataTypes ) => {
   return sequelize.define( 'tb_coordinate', {
-    crdntSeqNo : {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      primaryKey : true,
-      autoIncrement: true,
-      comment : "좌표 일련번호"
-    },
     sdCd : {
       type: DataTypes.STRING(2),
       allowNull: false,
@@ -30,6 +23,18 @@ module.exports = ( sequelize, DataTypes ) => {
       allowNull: false,
       primaryKey : true,
       comment : "리 코드"
+    },
+    crdntNo : {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey : true,
+      comment : "좌표 번호"
+    },
+    crdntSeqNo : {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      primaryKey : true,
+      comment : "좌표 일련번호"
     },
     crdntLa : {
       type: DataTypes.DECIMAL(24,20),
