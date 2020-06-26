@@ -204,7 +204,7 @@ router.get('/store-surcharge', util.isLoggedin, [
 // 바이크다 상점 할증 등록
 router.post('/store-surcharge', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('srchrSeCd','할증 구분 코드는(01: 비, 02: 눈, 03: 결빙, 04: 기타)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04']),
+  check('srchrSeCd','할증 구분 코드는 필수 입력 입니다. (01: 비, 02: 눈, 03: 결빙, 04 05 06: 기타)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04','05','06']),
   check('srchrAmnt','할증 금액은 필수 입력 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric(),
   check('srchrApplyYn','할증 적용 여부는 (Y , N)으로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['Y','N'])
 ], function( req, res, next ) {
@@ -220,9 +220,8 @@ router.post('/store-surcharge', util.isLoggedin, [
 
 // 바이크다 상점 할증 수정
 router.put('/store-surcharge', util.isLoggedin, [
-  check('srchrSeqNo','할증 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('srchrSeCd','할증 구분 코드는(01: 비, 02: 눈, 03: 결빙, 04: 기타)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03','04']),
+  check('srchrSeCd','할증 구분 코드는 필수 입력 입니다. (01: 비, 02: 눈, 03: 결빙, 04 05 06: 기타)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04','05','06']),
   check('srchrAmnt','할증 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric(),
   check('srchrApplyYn','할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N'])
 ], function( req, res, next ) {
@@ -230,19 +229,19 @@ router.put('/store-surcharge', util.isLoggedin, [
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var data = req.body;
-  var srchrSeqNo = data.srchrSeqNo;
   var stoId = data.stoId;
+  var srchrSeCd = data.srchrSeCd;
 
-  delete data.srchrSeqNo;
   delete data.stoId;
+  delete data.srchrSeCd;
 
   // 상점 할증 등록 여부 검증
-  models.store_surcharge.findOne( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
+  models.store_surcharge.findOne( { where : { stoId: stoId, srchrSeCd : srchrSeCd } } ).then( result => {
     if( !result ) {
       var error = { message : "등록 되지 않은 할증 정보 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
-    models.store_surcharge.update( data, { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
+    models.store_surcharge.update( data, { where : { stoId: stoId, srchrSeCd : srchrSeCd } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
     }).catch( err => {
       return res.status(400).json( util.successFalse( err ) );
@@ -254,22 +253,22 @@ router.put('/store-surcharge', util.isLoggedin, [
 
 // 바이크다 상점 할증 삭제
 router.delete('/store-surcharge', util.isLoggedin, [
-  check('srchrSeqNo','할증 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('srchrSeCd','할증 구분 코드는 필수 입력 입니다. (01: 비, 02: 눈, 03: 결빙, 04 05 06: 기타)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04','05','06'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
-  var srchrSeqNo = req.body.srchrSeqNo;
   var stoId = req.body.stoId;
+  var srchrSeCd = req.body.srchrSeCd;
 
   // 상점 할증 등록 여부 검증
-  models.store_surcharge.findAll( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
+  models.store_surcharge.findAll( { where : { stoId: stoId, srchrSeCd : srchrSeCd } } ).then( result => {
     if( !result ) {
       var error = { message : "등록 되지 않은 할증 정보 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
-    models.store_surcharge.destroy( { where : { srchrSeqNo : srchrSeqNo, stoId: stoId } } ).then( result => {
+    models.store_surcharge.destroy( { where : { stoId: stoId, srchrSeCd : srchrSeCd } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
     }).catch( err => {
       return res.status(400).json( util.successFalse( err ) );

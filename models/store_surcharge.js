@@ -1,12 +1,5 @@
 module.exports = ( sequelize, DataTypes ) => {
   return sequelize.define( 'tb_store_surcharge', {
-    srchrSeqNo : {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      primaryKey : true,
-      autoIncrement: true,
-      comment : "할증 일련번호"
-    },
     stoId : {
       type: DataTypes.STRING(5),
       allowNull: false,
@@ -16,6 +9,7 @@ module.exports = ( sequelize, DataTypes ) => {
     srchrSeCd : {
       type: DataTypes.STRING(10),
       allowNull: false,
+      primaryKey : true,
       comment : "할증 구분 코드"
     },
     srchrCn : {
