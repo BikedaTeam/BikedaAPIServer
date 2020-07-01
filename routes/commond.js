@@ -25,4 +25,15 @@ router.get('/coordinate', function( req, res, next ) {
   });
 });
 
+router.get('/sido', function( req, res, next ) {
+  var where = {};
+  where.sdCd = req.query.sdCd;  
+  models.coordinate.findAll( { where : where } ).then( result => {
+    return res.status(200).json( util.successTrue( result ) );
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+
+
 module.exports = router;

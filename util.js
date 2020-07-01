@@ -27,7 +27,7 @@ util.parseError = function(errors){
     console.log(errors.message);
     return errors.message;
   } else {
-    return "system error";
+    return errors;
   }
 };
 
@@ -35,7 +35,7 @@ util.parseError = function(errors){
 // middlewares
 util.isLoggedin = function(req,res,next){
   var token = req.headers['x-access-token'];
-  if (!token) return res.status(401).json(util.successFalse(null,'token is required!'));
+  if (!token) return res.status(401).json(util.successFalse('token is required!'));
   else {
     jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
       if(err) return res.status(401).json(util.successFalse(err));

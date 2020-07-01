@@ -12,7 +12,7 @@ router.get('/', function( req, res, next ) {
 });
 
 // 바이크다 상점 전체 목록
-router.get('/stores', util.isLoggedin, function( req, res, next ) {
+router.get('/stores',  function( req, res, next ) {
   models.store.findAll().then( result => {
     return res.status(200).json( util.successTrue( result ) );
   }).catch( err => {
@@ -21,7 +21,7 @@ router.get('/stores', util.isLoggedin, function( req, res, next ) {
 });
 
 // 바이크다 상점 조회( 사업자 등록번호, 상점명, 상호, 대표자명 )
-router.get('/store', util.isLoggedin, function( req, res, next ) {
+router.get('/store',  function( req, res, next ) {
   var reqParam = req.query || '';
   var brcofcId     = reqParam.brcofcId || '';
   var stoBsnsRgnmb = reqParam.stoBsnsRgnmb || '';
@@ -42,7 +42,7 @@ router.get('/store', util.isLoggedin, function( req, res, next ) {
 });
 
 // 바이크다 상점 등록
-router.post('/store', util.isLoggedin, [
+router.post('/store',  [
   check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('stoBsnsRgnmb','사업자 등록 번호는 필수 입력 입니다. (-)를 제외한 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
   check('stoPassword','비밀번호는 필수 입력 입니다.').exists().bail().notEmpty(),
@@ -94,7 +94,7 @@ router.post('/store', util.isLoggedin, [
 });
 
 // 바이크다 상점 수정
-router.put('/store', util.isLoggedin, [
+router.put('/store',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').optional().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('stoBsnsRgnmb','사업자 번호는 (-)를 제외한 10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
@@ -142,7 +142,7 @@ router.put('/store', util.isLoggedin, [
 });
 
 // 바이크다 상점 포인트 조회( 상점 ID, 포인트 구분 코드 )
-router.get('/store-point', util.isLoggedin, [
+router.get('/store-point',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
@@ -163,7 +163,7 @@ router.get('/store-point', util.isLoggedin, [
   });
 });
 // 바이크다 상점 포인트 등록
-router.post('/store-point', util.isLoggedin, [
+router.post('/store-point',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('pointSeCd','포인트 구분 코드는(01: 증가, 02: 감소)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
   check('pointAmnt','포인트 금액은 필수 입력 입니다. 원단위로 입력해 주세요.').if(check('brcofcFeeSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric(),
@@ -180,7 +180,7 @@ router.post('/store-point', util.isLoggedin, [
 });
 
 // 바이크다 상점 할증 조회( 상점 ID, 할증 구분 코드 )
-router.get('/store-surcharge', util.isLoggedin, [
+router.get('/store-surcharge',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('srchrSeCd','포인트 구분 코드는(01: 비, 02: 눈, 03: 결빙, 04: 기타)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03','04'])
 ], function( req, res, next ) {
@@ -202,7 +202,7 @@ router.get('/store-surcharge', util.isLoggedin, [
 });
 
 // 바이크다 상점 할증 등록
-router.post('/store-surcharge', util.isLoggedin, [
+router.post('/store-surcharge',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('srchrSeCd','할증 구분 코드는 필수 입력 입니다. (01: 비, 02: 눈, 03: 결빙, 04 05 06: 기타)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04','05','06']),
   check('srchrAmnt','할증 금액은 필수 입력 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric(),
@@ -219,7 +219,7 @@ router.post('/store-surcharge', util.isLoggedin, [
 });
 
 // 바이크다 상점 할증 수정
-router.put('/store-surcharge', util.isLoggedin, [
+router.put('/store-surcharge',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('srchrSeCd','할증 구분 코드는 필수 입력 입니다. (01: 비, 02: 눈, 03: 결빙, 04 05 06: 기타)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04','05','06']),
   check('srchrAmnt','할증 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric(),
@@ -252,7 +252,7 @@ router.put('/store-surcharge', util.isLoggedin, [
 });
 
 // 바이크다 상점 할증 삭제
-router.delete('/store-surcharge', util.isLoggedin, [
+router.delete('/store-surcharge',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('srchrSeCd','할증 구분 코드는 필수 입력 입니다. (01: 비, 02: 눈, 03: 결빙, 04 05 06: 기타)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02','03','04','05','06'])
 ], function( req, res, next ) {
@@ -279,7 +279,7 @@ router.delete('/store-surcharge', util.isLoggedin, [
 });
 
 // 바이크다 상점 거리 설정 조회( 상점 ID, 할증 구분 코드 )
-router.get('/store-distance', util.isLoggedin, [
+router.get('/store-distance',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
@@ -298,7 +298,7 @@ router.get('/store-distance', util.isLoggedin, [
 });
 
 // 바이크다 상점 거리 설정 등록
-router.post('/store-distance', util.isLoggedin, [
+router.post('/store-distance',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('setStdDstnc','시작 거리는 필수 입력 입니다. Km 단위로 소수점 2자리까지 입력 가능합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
   check('setEndDstnc','종료 거리는 필수 입력 입니다. Km 단위로 소수점 2자리까지 입력 가능합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
@@ -315,7 +315,7 @@ router.post('/store-distance', util.isLoggedin, [
 });
 
 // 바이크다 상점 거리 설정 수정
-router.put('/store-distance', util.isLoggedin, [
+router.put('/store-distance',  [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('setStdDstnc','시작 거리는 Km 단위로 소수점 2자리까지 입력 가능합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,2})([.]\d{0,2}?)?$/),
@@ -349,7 +349,7 @@ router.put('/store-distance', util.isLoggedin, [
 });
 
 // 바이크다 상점 거리 설정 삭제
-router.delete('/store-distance', util.isLoggedin, [
+router.delete('/store-distance',  [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
@@ -380,7 +380,7 @@ router.delete('/store-distance', util.isLoggedin, [
 });
 
 // 바이크다 상점 지역 설정 조회( 상점 ID )
-router.get('/store-area', util.isLoggedin, [
+router.get('/store-area',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
@@ -399,7 +399,7 @@ router.get('/store-area', util.isLoggedin, [
 });
 
 // 바이크다 상점 지역 설정 등록
-router.post('/store-area', util.isLoggedin, [
+router.post('/store-area',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('setSdCd','시,도 코드는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric(),
   check('setSggCd','시,군,구 코드는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric(),
@@ -418,7 +418,7 @@ router.post('/store-area', util.isLoggedin, [
 });
 
 // 바이크다 상점 지역 설정 수정
-router.put('/store-area', util.isLoggedin, [
+router.put('/store-area',  [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('setSdCd','시,도 코드가 입력 되지 않았습니다.').optional().notEmpty().bail().isNumeric(),
@@ -454,7 +454,7 @@ router.put('/store-area', util.isLoggedin, [
 });
 
 // 바이크다 상점 거리 설정 삭제
-router.delete('/store-area', util.isLoggedin, [
+router.delete('/store-area',  [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
 ], function( req, res, next ) {
@@ -485,7 +485,7 @@ router.delete('/store-area', util.isLoggedin, [
 });
 
 // 바이크다 상점 특별 설정 조회( 상점 ID )
-router.get('/store-special', util.isLoggedin, [
+router.get('/store-special',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
   var errors = validationResult(req);
@@ -503,7 +503,7 @@ router.get('/store-special', util.isLoggedin, [
   });
 });
 // 바이크다 상점 특별 설정 등록
-router.post('/store-special', util.isLoggedin, [
+router.post('/store-special',  [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('setAmnt','설정 금액은 필수 입니다. 원단위로 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric()
 ], function( req, res, next ) {
@@ -517,7 +517,7 @@ router.post('/store-special', util.isLoggedin, [
   });
 });
 // 바이크다 상점 특수 설정 수정
-router.put('/store-special', util.isLoggedin, [
+router.put('/store-special',  [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('setAmnt','설정 금액은 원단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric()
@@ -548,7 +548,7 @@ router.put('/store-special', util.isLoggedin, [
   });
 });
 // 바이크다 상점 특수 설정 삭제
-router.delete('/store-special', util.isLoggedin, [
+router.delete('/store-special',  [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
 ], function( req, res, next ) {
@@ -579,7 +579,7 @@ router.delete('/store-special', util.isLoggedin, [
 });
 
 // 바이크다 상점 특별 좌표 조회( 설정 일련번호, 상점 ID )
-router.get('/store-location', util.isLoggedin, [
+router.get('/store-location',  [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 })
 ], function( req, res, next ) {
@@ -598,7 +598,7 @@ router.get('/store-location', util.isLoggedin, [
   });
 });
 // 바이크다 상점 특별 좌표 등록
-router.post('/store-location', util.isLoggedin, [
+router.post('/store-location',  [
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('lctnLa','위도는 필수 입력 입니다. 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
@@ -614,7 +614,7 @@ router.post('/store-location', util.isLoggedin, [
   });
 });
 // 바이크다 상점 특수 좌표 수정
-router.put('/store-location', util.isLoggedin, [
+router.put('/store-location',  [
   check('lctnSeqNo','좌표 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
@@ -649,7 +649,7 @@ router.put('/store-location', util.isLoggedin, [
   });
 });
 // 바이크다 상점 특수 좌표 삭제
-router.delete('/store-location', util.isLoggedin, [
+router.delete('/store-location',  [
   check('lctnSeqNo','좌표 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('setSeqNo','설정 일련번호는 필수 입력 입니다.').exists().bail().notEmpty().bail().isNumeric().bail(),
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
