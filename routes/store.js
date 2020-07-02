@@ -396,7 +396,7 @@ router.get('/store-area',  [
     return res.status(200).json( util.successTrue( result ) );
   }, function ( err ) {
     return res.status(400).json( util.successFalse( err ) );
-  });  
+  });
 
 });
 

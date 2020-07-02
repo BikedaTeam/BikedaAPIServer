@@ -12,7 +12,7 @@ module.exports = ( sequelize, DataTypes ) => {
       primaryKey : true,
       comment : "시군구 코드"
     },
-    ssgNm : {
+    sggNm : {
       type: DataTypes.STRING(100),
       allowNull: true,
       comment : "시군구 명"
