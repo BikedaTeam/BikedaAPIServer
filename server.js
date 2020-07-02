@@ -9,7 +9,7 @@ var branchApi = require('./routes/branch');
 var storeApi = require('./routes/store');
 var riderApi = require('./routes/rider');
 var deliveryApi = require('./routes/delivery');
-var commondApi = require('./routes/commond');
+var commonApi = require('./routes/common');
 
 var sequelize = require('./models/index').sequelize;
 var app = express();
@@ -49,7 +49,7 @@ app.use('/api/branch', branchApi);
 app.use('/api/store', storeApi);
 app.use('/api/rider', riderApi);
 app.use('/api/delivery', deliveryApi);
-app.use('/api/commond', commondApi);
+app.use('/api/common', commonApi);
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
