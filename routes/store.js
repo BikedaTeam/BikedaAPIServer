@@ -387,15 +387,17 @@ router.get('/store-area',  [
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
 
   var reqParam = req.query || '';
-  var stoId     = reqParam.stoId || '';
+  var stoId = reqParam.stoId || '';
 
-  var where = {};
-  where.stoId = stoId;
-  models.store_area_setting.findAll( { where : where } ).then( result => {
+  var query = 'select *, ( select sdNm from tb_sidos where sdCd = setSdCd ) AS setSdNm, ( select sggNm from tb_sigungus where sdCd = setSdCd and sggCd = setSggCd ) AS setSggNm, ( select emdNm from tb_emds where sdCd = setSdCd and sggCd = setSggCd and emdCd = setEmdCd ) AS setEmdNm, ( select riNm from tb_ris where sdCd = setSdCd and sggCd = setSggCd and emdCd = setEmdCd and riCd = setRiCd ) AS setRiNm from tb_store_area_settings where 1=1 ';
+  if( stoId ) query += 'and stoId = "' + stoId + '" ';
+
+  models.sequelize.query( query ).spread( function ( result, metadata ) {
     return res.status(200).json( util.successTrue( result ) );
-  }).catch( err => {
+  }, function ( err ) {
     return res.status(400).json( util.successFalse( err ) );
-  });
+  });  
+
 });
 
 // 바이크다 상점 지역 설정 등록
