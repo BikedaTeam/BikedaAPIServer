@@ -16,9 +16,9 @@
     "operatorsAliases": false
   },
   "production": {
-    "username": "djaqoek",
-    "password": "djaqoek!!11",
-    "database": "dbdjaqoek",
+    "username": "deliverylabapi",
+    "password": "deliverylabapi!!",
+    "database": "dbdeliverylabapi",
     "host": "211.47.75.102",
     "dialect": "mysql",
     "operatorsAliases": false

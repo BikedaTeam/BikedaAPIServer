@@ -25,7 +25,7 @@ router.get('/coordinate', function( req, res, next ) {
   });
 });
 
-  router.get('/sido', function( req, res, next ) {
+router.get('/sido', function( req, res, next ) {
   models.sido.findAll().then( result => {
     return res.status(200).json( util.successTrue( result ) );
   }).catch( err => {
@@ -33,5 +33,37 @@ router.get('/coordinate', function( req, res, next ) {
   });
 });
 
+router.get('/sigungu', function( req, res, next ) {
+  var where = {};
+  where.sdCd = req.query.sdCd;
+  models.sigungu.findAll( { where : where } ).then( result => {
+    return res.status(200).json( util.successTrue( result ) );
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+
+router.get('/emd', function( req, res, next ) {
+  var where = {};
+  where.sdCd = req.query.sdCd;
+  where.sggCd = req.query.sggCd;
+  models.emd.findAll( { where : where } ).then( result => {
+    return res.status(200).json( util.successTrue( result ) );
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
+
+router.get('/ri', function( req, res, next ) {
+  var where = {};
+  where.sdCd = req.query.sdCd;
+  where.sggCd = req.query.sggCd;
+  where.emdCd = req.query.emdCd;
+  models.ri.findAll( { where : where } ).then( result => {
+    return res.status(200).json( util.successTrue( result ) );
+  }).catch( err => {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
 
 module.exports = router;
