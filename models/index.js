@@ -16,6 +16,7 @@ db.Sequelize = Sequelize;
 db.branch = require('./branch')(sequelize, Sequelize);
 db.branch_point = require('./branch_point')(sequelize, Sequelize);
 db.branch_share = require('./branch_share')(sequelize, Sequelize);
+db.branch_account = require('./branch_account')(sequelize, Sequelize);
 
 db.store = require('./store')(sequelize, Sequelize);
 db.store_point = require('./store_point')(sequelize, Sequelize);

@@ -11,11 +11,6 @@ module.exports = ( sequelize, DataTypes ) => {
       allowNull: false,
       comment : "지점 사업자 등록 번호"
     },
-    brcofcPassword :{
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      comment : "지점 비밀번호"
-    },
     brcofcNm : {
       type: DataTypes.STRING(100),
       allowNull: false,

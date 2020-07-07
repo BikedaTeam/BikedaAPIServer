@@ -30,19 +30,22 @@ router.post('/admin', [
 
 // 지점 로그인 인증 및 토큰 생성
 router.post('/branch', [
-  check('brcofcBsnsRgnmb', '사업자 등록 번호 / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty(),
-  check('brcofcPassword', '사업자 등록 번호 / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty()
+  check('adminId', '관리자 ID / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty(),
+  check('adminPassword', '관리자 ID / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-
-  models.branch.findOne( { where : { brcofcBsnsRgnmb : req.body.brcofcBsnsRgnmb, brcofcPassword : req.body.brcofcPassword } } ).then( result => {
+  var where = {};
+  where.adminId = req.body.adminId;
+  where.adminPassword = req.body.adminPassword;
+  models.branch_account.findOne( { where : where } ).then( result => {
     if( !result ){
-      var errors = { message: '사업자 등록 번호 또는 비밀번호가 일치 하지 않습니다.' };
+      var errors = { message: '관리자 ID 또는 비밀번호가 일치 하지 않습니다.' };
       return res.status(400).json(util.successFalse(errors));
     }
     var payload = {
-      brcofcBsnsRgnmb : result.brcofcBsnsRgnmb
+      adminId : result.adminId,
+      brcofcId : result.brcofcId
     };
     var secretOrPrivateKey = process.env.JWT_SECRET;
     var options = {expiresIn: 60*60*24};
