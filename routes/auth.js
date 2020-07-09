@@ -51,7 +51,16 @@ router.post('/branch', [
     var options = {expiresIn: 60*60*24};
     jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
       if(err) return res.status(400).json(util.successFalse(err));
-      res.status(200).json(util.successTrue(token));
+
+      var returnData = {};
+      returnData.adminId = result.adminId;
+      returnData.brcofcId = result.brcofcId;
+      returnData.adminNm = result.adminNm;
+      returnData.adminCelno = result.adminCelno;
+      returnData.adminGradeCd = result.adminGradeCd;
+      returnData.adminUseYn = result.adminUseYn;
+      returnData.token = token;
+      res.status(200).json(util.successTrue(returnData));
     });
   }).catch( err => {
     return res.status(400).json(util.successFalse(err));
