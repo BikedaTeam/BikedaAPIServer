@@ -26,17 +26,46 @@ router.get('/delivery', util.isLoggedin, function( req, res, next ) {
   var stoId         = reqParam.stoId || '';
   var riderBrcofcId = reqParam.riderBrcofcId || '';
   var riderId       = reqParam.riderId || '';
-  var dlvryRecvDt   = reqParam.dlvryRecvDt || '';
+  var dlvryRecvDtStd   = reqParam.dlvryRecvDtStd || '';
+  var dlvryRecvDtEnd   = reqParam.dlvryRecvDtEnd || '';
   var dlvryStateCd  = reqParam.dlvryStateCd || '';
 
-  var query = 'select * from tb_deliveries where 1=1 ';
-  if( stoBrcofcId )   query += 'and stoBrcofcId = ' + stoBrcofcId;
-  if( stoId )         query += 'and stoId = ' + stoId;
-  if( riderBrcofcId ) query += 'and riderBrcofcId = ' + riderBrcofcId;
-  if( riderId )       query += 'and riderId = ' + riderId;
-  if( dlvryRecvDt )   query += 'and date_format(dlvryRecvDt, "%Y%m%d") = ' + dlvryStateCd;
-  if( dlvryStateCd )  query += 'and dlvryStateCd = ' + dlvryStateCd;
+  var query = 'select tb_deliveries.*, date_format(dlvryRecvDt, "%Y%m%d%H%i%s") dlvryRecvDt, ifnull(stoMtlty,"") stoMtlty, ifnull(stoTelno,"") stoTelno, ifnull(riderNm,"") riderNm, ifnull(riderCelno,"") riderCelno from tb_deliveries left join tb_stores on tb_stores.stoId = tb_deliveries.stoId left join tb_riders on tb_riders.riderId = tb_deliveries.riderId where 1=1';
+  if( stoBrcofcId )   query += ' and stoBrcofcId = "' + stoBrcofcId + '"';
+  if( stoId )         query += ' and stoId = "' + stoId + '"';
+  if( riderBrcofcId ) query += ' and riderBrcofcId = "' + riderBrcofcId + '"';
+  if( riderId )       query += ' and riderId = "' + riderId + '"';
+  if( dlvryRecvDtStd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") > "' + dlvryRecvDtStd + '"';
+  if( dlvryRecvDtEnd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") < "' + dlvryRecvDtEnd + '"';
+  if( dlvryStateCd )  query += ' and dlvryStateCd = "' + dlvryStateCd + '"';
+  query += ' order by dlvryRecvDt desc'
+  models.sequelize.query( query ).spread( function ( result, metadata ) {
+    return res.status(200).json( util.successTrue( result ) );
+  }, function ( err ) {
+    return res.status(400).json( util.successFalse( err ) );
+  });
+});
 
+// 바이크다 배달 건수 조회(  )
+router.get('/delivery-count', util.isLoggedin, function( req, res, next ) {
+  var reqParam      = req.query || '';
+  var stoBrcofcId   = reqParam.stoBrcofcId || '';
+  var stoId         = reqParam.stoId || '';
+  var riderBrcofcId = reqParam.riderBrcofcId || '';
+  var riderId       = reqParam.riderId || '';
+  var dlvryRecvDtStd   = reqParam.dlvryRecvDtStd || '';
+  var dlvryRecvDtEnd   = reqParam.dlvryRecvDtEnd || '';
+  var dlvryStateCd  = reqParam.dlvryStateCd || '';
+
+  var query = 'SELECT dlvryStateCd, COUNT(*) dlvryCnt FROM tb_deliveries where 1=1';
+  if( stoBrcofcId )   query += ' and stoBrcofcId = "' + stoBrcofcId + '"';
+  if( stoId )         query += ' and stoId = "' + stoId + '"';
+  if( riderBrcofcId ) query += ' and riderBrcofcId = "' + riderBrcofcId + '"';
+  if( riderId )       query += ' and riderId = "' + riderId + '"';
+  if( dlvryRecvDtStd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") > "' + dlvryRecvDtStd + '"';
+  if( dlvryRecvDtEnd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") < "' + dlvryRecvDtEnd + '"';
+  if( dlvryStateCd )  query += ' and dlvryStateCd = "' + dlvryStateCd + '"';
+  query += ' group by dlvryStateCd'
   models.sequelize.query( query ).spread( function ( result, metadata ) {
     return res.status(200).json( util.successTrue( result ) );
   }, function ( err ) {
@@ -84,7 +113,7 @@ router.post('/delivery', util.isLoggedin, [
 
 // 바이크다 배달 수정 ( 고객 정보 )
 router.put('/delivery', util.isLoggedin, [
-  check('dlvryNo','주문 번호는 필수 입력 입니다. 상점ID(5) + "O" + 날짜(8) + 일련번호 형식으로 입력해 주세요.(ex : S0001O1900123100001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('dlvryNo','주문 번호는 필수 입력 입니다. 상점ID(5) + "O" + 날짜(8) + 일련번호 형식으로 입력해 주세요.(ex : S0001O1900123100001)').exists().bail().notEmpty().bail().isLength({ min: 19, max: 19 }),
   check('dlvryCusTelno','고객 전화 번호는 (-)를 제외한 숫자로 입력해 주세요.').optional().notEmpty().isNumeric(),
   check('dlvryCusAdres','고객 주소가 입력 되지 않았습니다.').optional().notEmpty(),
   check('dlvryCusRoadAdres','고객 도로명 주소가 입력 되지 않았습니다.').optional().notEmpty(),
@@ -108,12 +137,12 @@ router.put('/delivery', util.isLoggedin, [
   delete data.dlvryNo;
 
   // 배달 등록 여부 검증
-  models.delivery.findOne( { where : { dlvryNo: data.dlvryNo } } ).then( result => {
+  models.delivery.findOne( { where : { dlvryNo: dlvryNo } } ).then( result => {
     if( !result ) {
       var error = { message : "등록 되지 않은 배달 접수 번호 입니다."};
       return res.status(400).json( util.successFalse( error ) );
     }
-    models.delivery.update( data, { where : { dlvryNo: data.dlvryNo } } ).then( result => {
+    models.delivery.update( data, { where : { dlvryNo: dlvryNo } } ).then( result => {
       return res.status(201).json( util.successTrue( result ) );
     }).catch( err => {
       return res.status(400).json( util.successFalse( err ) );
