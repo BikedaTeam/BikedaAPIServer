@@ -53,14 +53,41 @@ router.post('/branch', [
       if(err) return res.status(400).json(util.successFalse(err));
 
       var returnData = {};
-      returnData.adminId = result.adminId;
-      returnData.brcofcId = result.brcofcId;
-      returnData.adminNm = result.adminNm;
-      returnData.adminCelno = result.adminCelno;
-      returnData.adminGradeCd = result.adminGradeCd;
-      returnData.adminUseYn = result.adminUseYn;
+      var userData = {};
+      var branchData = {};
+      userData.adminId = result.adminId;
+      userData.brcofcId = result.brcofcId;
+      userData.adminNm = result.adminNm;
+      userData.adminCelno = result.adminCelno;
+      userData.adminGradeCd = result.adminGradeCd;
+      userData.adminUseYn = result.adminUseYn;
       returnData.token = token;
-      res.status(200).json(util.successTrue(returnData));
+      returnData.user = userData;
+
+      models.branch.findOne( { where : { brcofcId : result.brcofcId } } ).then( result => {
+        branchData.brcofcId = result.brcofcId;
+        branchData.brcofcBsnsRgnmb = result.brcofcBsnsRgnmb;
+        branchData.brcofcNm = result.brcofcNm;
+        branchData.brcofcMtlty = result.brcofcMtlty;
+        branchData.brcofcBizSeCd = result.brcofcBizSeCd;
+        branchData.brcofcRprsntvNm = result.brcofcRprsntvNm;
+        branchData.brcofcBrdYmd = result.brcofcBrdYmd;
+        branchData.brcofcCrprtRgnmb = result.brcofcCrprtRgnmb;
+        branchData.brcofcOpnngYmd = result.brcofcOpnngYmd;
+        branchData.brcofcBsnsPlaceAdres = result.brcofcBsnsPlaceAdres;
+        branchData.brcofcHdofcAdres = result.brcofcHdofcAdres;
+        branchData.brcofcBizcnd = result.brcofcBizcnd;
+        branchData.brcofcInduty = result.brcofcInduty;
+        branchData.brcofcTelno = result.brcofcTelno;
+        branchData.brcofcFeeSeCd = result.brcofcFeeSeCd;
+        branchData.brcofcFeeAmnt = result.brcofcFeeAmnt;
+        branchData.brcofcFeeRate = result.brcofcFeeRate;
+        branchData.brcofcStateCd = result.brcofcStateCd;
+        returnData.branch = branchData;
+        res.status(200).json(util.successTrue(returnData));
+      }).catch( err => {
+        return res.status(400).json(util.successFalse(err));
+      });
     });
   }).catch( err => {
     return res.status(400).json(util.successFalse(err));

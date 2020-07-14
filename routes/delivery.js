@@ -21,6 +21,7 @@ router.get('/deliveries', util.isLoggedin, function( req, res, next ) {
 
 // 바이크다 배달 조회(  )
 router.get('/delivery', util.isLoggedin, function( req, res, next ) {
+  console.log(req.query);
   var reqParam      = req.query || '';
   var stoBrcofcId   = reqParam.stoBrcofcId || '';
   var stoId         = reqParam.stoId || '';
@@ -38,7 +39,7 @@ router.get('/delivery', util.isLoggedin, function( req, res, next ) {
   if( dlvryRecvDtStd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") > "' + dlvryRecvDtStd + '"';
   if( dlvryRecvDtEnd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") < "' + dlvryRecvDtEnd + '"';
   if( dlvryStateCd )  query += ' and dlvryStateCd = "' + dlvryStateCd + '"';
-  query += ' order by dlvryRecvDt desc'
+  query += ' order by dlvryRecvDt desc';
   models.sequelize.query( query ).spread( function ( result, metadata ) {
     return res.status(200).json( util.successTrue( result ) );
   }, function ( err ) {
@@ -65,7 +66,7 @@ router.get('/delivery-count', util.isLoggedin, function( req, res, next ) {
   if( dlvryRecvDtStd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") > "' + dlvryRecvDtStd + '"';
   if( dlvryRecvDtEnd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") < "' + dlvryRecvDtEnd + '"';
   if( dlvryStateCd )  query += ' and dlvryStateCd = "' + dlvryStateCd + '"';
-  query += ' group by dlvryStateCd'
+  query += ' group by dlvryStateCd';
   models.sequelize.query( query ).spread( function ( result, metadata ) {
     return res.status(200).json( util.successTrue( result ) );
   }, function ( err ) {
