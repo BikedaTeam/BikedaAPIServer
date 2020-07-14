@@ -28,7 +28,7 @@ router.get('/rider', util.isLoggedin, function( req, res, next ) {
   var riderStateCd    = reqParam.riderStateCd || '';
   var riderLoginYn    = reqParam.riderLoginYn || '';
 
-  var query = 'select tb_riders.*, ( select ifnull(count(*), 0) from tb_deliveries where tb_deliveries.riderId = tb_riders.riderId and dlvryStateCd in ("02","03") ) riderDsptCnt from tb_riders where 1=1';
+  var query = 'select tb_riders.*, ( select ifnull(count(*), 0) from tb_deliveries where tb_deliveries.riderId = tb_riders.riderId and dlvryStateCd in ("02","03") ) riderDsptCnt, riderLa, riderLo from tb_riders left join tb_rider_locations on tb_riders.riderId = tb_rider_locations.riderId where 1=1';
   if( riderCelno ) query += ' and riderCelno like "%' + riderCelno + '%" ';
   if( riderNm )    query += ' and riderNm like "%' + riderNm + '%" ';
   if( brcofcId )   query += ' and brcofcId = "' + brcofcId + '"';

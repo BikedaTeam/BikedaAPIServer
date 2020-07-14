@@ -20,7 +20,8 @@ router.get('/deliveries', util.isLoggedin, function( req, res, next ) {
 });
 
 // 바이크다 배달 조회(  )
-router.get('/delivery', util.isLoggedin, function( req, res, next ) {
+// router.get('/delivery', util.isLoggedin, function( req, res, next ) {
+router.get('/delivery', function( req, res, next ) {
   console.log(req.query);
   var reqParam      = req.query || '';
   var stoBrcofcId   = reqParam.stoBrcofcId || '';
@@ -31,13 +32,13 @@ router.get('/delivery', util.isLoggedin, function( req, res, next ) {
   var dlvryRecvDtEnd   = reqParam.dlvryRecvDtEnd || '';
   var dlvryStateCd  = reqParam.dlvryStateCd || '';
 
-  var query = 'select tb_deliveries.*, date_format(dlvryRecvDt, "%Y%m%d%H%i%s") dlvryRecvDt, ifnull(stoMtlty,"") stoMtlty, ifnull(stoTelno,"") stoTelno, ifnull(riderNm,"") riderNm, ifnull(riderCelno,"") riderCelno from tb_deliveries left join tb_stores on tb_stores.stoId = tb_deliveries.stoId left join tb_riders on tb_riders.riderId = tb_deliveries.riderId where 1=1';
-  if( stoBrcofcId )   query += ' and stoBrcofcId = "' + stoBrcofcId + '"';
-  if( stoId )         query += ' and stoId = "' + stoId + '"';
-  if( riderBrcofcId ) query += ' and riderBrcofcId = "' + riderBrcofcId + '"';
-  if( riderId )       query += ' and riderId = "' + riderId + '"';
-  if( dlvryRecvDtStd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") > "' + dlvryRecvDtStd + '"';
-  if( dlvryRecvDtEnd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") < "' + dlvryRecvDtEnd + '"';
+  var query = 'select tb_deliveries.*, date_format(dlvryRecvDt, "%Y%m%d%H%i%s") dlvryRecvDt, date_format(dlvryDsptcDt, "%Y%m%d%H%i%s") dlvryDsptcDt, date_format(dlvryPickDt, "%Y%m%d%H%i%s") dlvryPickDt, date_format(dlvryTcDt, "%Y%m%d%H%i%s") dlvryTcDt, ifnull(stoMtlty,"") stoMtlty, ifnull(stoTelno,"") stoTelno, ifnull(riderNm,"") riderNm, ifnull(riderCelno,"") riderCelno from tb_deliveries left join tb_stores on tb_stores.stoId = tb_deliveries.stoId left join tb_riders on tb_riders.riderId = tb_deliveries.riderId where 1=1';
+  if( stoBrcofcId )   query += ' and tb_deliveries.stoBrcofcId = "' + stoBrcofcId + '"';
+  if( stoId )         query += ' and tb_deliveries.stoId = "' + stoId + '"';
+  if( riderBrcofcId ) query += ' and tb_deliveries.riderBrcofcId = "' + riderBrcofcId + '"';
+  if( riderId )       query += ' and tb_deliveries.riderId = "' + riderId + '"';
+  if( dlvryRecvDtStd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") >= "' + dlvryRecvDtStd + '"';
+  if( dlvryRecvDtEnd )   query += ' and date_format(dlvryRecvDt, "%Y%m%d%H%i%s") <= "' + dlvryRecvDtEnd + '"';
   if( dlvryStateCd )  query += ' and dlvryStateCd = "' + dlvryStateCd + '"';
   query += ' order by dlvryRecvDt desc';
   models.sequelize.query( query ).spread( function ( result, metadata ) {
