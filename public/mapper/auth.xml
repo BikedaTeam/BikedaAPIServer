@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="auth">
+  <select id="branchLogin">
+    SELECT	accounts.adminId,
+      			accounts.brcofcId,
+      			accounts.adminNm,
+      			accounts.adminCelno,
+      			accounts.adminGradeCd,
+            branch.brcofcBsnsRgnmb,
+            branch.brcofcNm,
+            branch.brcofcMtlty,
+            branch.brcofcBizSeCd,
+            branch.brcofcRprsntvNm,
+            branch.brcofcBrdYmd,
+            branch.brcofcCrprtRgnmb,
+            branch.brcofcOpnngYmd,
+            branch.brcofcBsnsPlaceAdres,
+            branch.brcofcHdofcAdres,
+            branch.brcofcBizcnd,
+            branch.brcofcInduty,
+            branch.brcofcTelno,
+            branch.brcofcVrtlAcnt,
+            branch.brcofcFeeSeCd,
+            branch.brcofcFeeAmnt,
+            branch.brcofcFeeRate,
+            branch.brcofcStateCd
+      FROM	tb_branch_accounts AS accounts,
+            tb_branches AS branch
+     WHERE	accounts.brcofcId = branch.brcofcId
+       AND  accounts.adminId = #{adminId}
+       AND  accounts.adminPassword = #{adminPassword}
+       AND  accounts.adminUseYn = 'Y'
+     </if>
+  </select>
+</mapper>

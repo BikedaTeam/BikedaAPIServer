@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var util = require('../util');
 var jwt = require('jsonwebtoken');
-var models = require('../models');
+var mysqlConnect = require('../mysqlConnect');
 var { check, validationResult } = require('express-validator');
 
 // 바이크다 인증 API Document
@@ -17,14 +17,27 @@ router.post('/admin', [
 ], function( req, res, next ){
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-  var payload = {
-    id : req.body.adminId
-  };
-  var secretOrPrivateKey = process.env.JWT_SECRET;
-  var options = {expiresIn: 60*60*24};
-  jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
-    if(err) return res.status(400).json(util.successFalse(err));
-    res.status(200).json(util.successTrue(token));
+  mysqlConnect('auth', 'adminLogin', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    if( results.length == 1 ) {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+
+      var payload = {
+        adminId : json[0].adminId
+      };
+      var secretOrPrivateKey = process.env.JWT_SECRET;
+      var options = {expiresIn: 60*60*24};
+      jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
+        if(err) return res.status(400).json(util.successFalse(err));
+        json[0].token = token;
+        res.status(200).json(util.successTrue(json[0]));
+      });
+    } else {
+      res.status(401).json(util.successFalse("관리자 ID 또는 비밀번호가 일치 하지 않습니다."));
+    }
   });
 });
 
@@ -35,62 +48,28 @@ router.post('/branch', [
 ], function( req, res, next ){
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-  var where = {};
-  where.adminId = req.body.adminId;
-  where.adminPassword = req.body.adminPassword;
-  models.branch_account.findOne( { where : where } ).then( result => {
-    if( !result ){
-      var errors = { message: '관리자 ID 또는 비밀번호가 일치 하지 않습니다.' };
-      return res.status(400).json(util.successFalse(errors));
+  mysqlConnect('auth', 'branchLogin', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
     }
-    var payload = {
-      adminId : result.adminId,
-      brcofcId : result.brcofcId
-    };
-    var secretOrPrivateKey = process.env.JWT_SECRET;
-    var options = {expiresIn: 60*60*24};
-    jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
-      if(err) return res.status(400).json(util.successFalse(err));
+    if( results.length == 1 ) {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
 
-      var returnData = {};
-      var userData = {};
-      var branchData = {};
-      userData.adminId = result.adminId;
-      userData.brcofcId = result.brcofcId;
-      userData.adminNm = result.adminNm;
-      userData.adminCelno = result.adminCelno;
-      userData.adminGradeCd = result.adminGradeCd;
-      userData.adminUseYn = result.adminUseYn;
-      returnData.token = token;
-      returnData.user = userData;
-
-      models.branch.findOne( { where : { brcofcId : result.brcofcId } } ).then( result => {
-        branchData.brcofcId = result.brcofcId;
-        branchData.brcofcBsnsRgnmb = result.brcofcBsnsRgnmb;
-        branchData.brcofcNm = result.brcofcNm;
-        branchData.brcofcMtlty = result.brcofcMtlty;
-        branchData.brcofcBizSeCd = result.brcofcBizSeCd;
-        branchData.brcofcRprsntvNm = result.brcofcRprsntvNm;
-        branchData.brcofcBrdYmd = result.brcofcBrdYmd;
-        branchData.brcofcCrprtRgnmb = result.brcofcCrprtRgnmb;
-        branchData.brcofcOpnngYmd = result.brcofcOpnngYmd;
-        branchData.brcofcBsnsPlaceAdres = result.brcofcBsnsPlaceAdres;
-        branchData.brcofcHdofcAdres = result.brcofcHdofcAdres;
-        branchData.brcofcBizcnd = result.brcofcBizcnd;
-        branchData.brcofcInduty = result.brcofcInduty;
-        branchData.brcofcTelno = result.brcofcTelno;
-        branchData.brcofcFeeSeCd = result.brcofcFeeSeCd;
-        branchData.brcofcFeeAmnt = result.brcofcFeeAmnt;
-        branchData.brcofcFeeRate = result.brcofcFeeRate;
-        branchData.brcofcStateCd = result.brcofcStateCd;
-        returnData.branch = branchData;
-        res.status(200).json(util.successTrue(returnData));
-      }).catch( err => {
-        return res.status(400).json(util.successFalse(err));
+      var payload = {
+        adminId : json[0].adminId,
+        brcofcId : json[0].brcofcId
+      };
+      var secretOrPrivateKey = process.env.JWT_SECRET;
+      var options = {expiresIn: 60*60*24};
+      jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
+        if(err) return res.status(400).json(util.successFalse(err));
+        json[0].token = token;
+        res.status(200).json(util.successTrue(json[0]));
       });
-    });
-  }).catch( err => {
-    return res.status(400).json(util.successFalse(err));
+    } else {
+      res.status(401).json(util.successFalse("관리자 ID 또는 비밀번호가 일치 하지 않습니다."));
+    }
   });
 });
 
@@ -101,26 +80,30 @@ router.post('/store', [
 ], function( req, res, next ){
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-
-  models.store.findOne( { where : { stoBsnsRgnmb : req.body.stoBsnsRgnmb, stoPassword : req.body.stoPassword } } ).then( result => {
-    if( !result ){
-      var errors = { message: '사업자 등록 번호 또는 비밀번호가 일치 하지 않습니다.' };
-      return res.status(400).json(util.successFalse(errors));
+  mysqlConnect('auth', 'storeLogin', req.body, function (error, results) {
+    if (error) {
+      console.log(error);
+      res.status(500).json(util.successFalse("SQL Error"));
     }
-    var payload = {
-      stoBsnsRgnmb : result.stoBsnsRgnmb
-    };
-    var secretOrPrivateKey = process.env.JWT_SECRET;
-    var options = {expiresIn: 60*60*24};
-    jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
-      if(err) return res.status(400).json(util.successFalse(err));
-      res.status(200).json(util.successTrue(token));
-    });
-  }).catch( err => {
-    return res.status(400).json(util.successFalse(err));
+    if( results.length == 1 ) {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+
+      var payload = {
+        stoBsnsRgnmb : json[0].stoBsnsRgnmb
+      };
+      var secretOrPrivateKey = process.env.JWT_SECRET;
+      var options = {expiresIn: 60*60*24};
+      jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
+        if(err) return res.status(400).json(util.successFalse(err));
+        json[0].token = token;
+        res.status(200).json(util.successTrue(json[0]));
+      });
+    } else {
+      res.status(401).json(util.successFalse("사업자 등록 번호 또는 비밀번호가 일치 하지 않습니다."));
+    }
   });
 });
-
 
 // 랴이더 로그인 인증 및 토큰 생성
 router.post('/rider', [
@@ -128,117 +111,27 @@ router.post('/rider', [
 ], function( req, res, next ){
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-
-  models.rider.findOne( { where : { riderCelno : req.body.riderCelno } } ).then( result => {
-    if( !result ){
-      var errors = { message: '존재 하지 않는 휴대전화 번호 입니다.' };
-      return res.status(400).json(util.successFalse(errors));
+  mysqlConnect('auth', 'riderLogin', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
     }
-    var payload = {
-      riderCelno : result.riderCelno
-    };
-    var secretOrPrivateKey = process.env.JWT_SECRET;
-    var options = {expiresIn: 60*60*24};
-    jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
-      if(err) return res.status(400).json(util.successFalse(err));
-      res.status(200).json(util.successTrue(token));
-    });
-  }).catch( err => {
-    return res.status(400).json(util.successFalse(err));
-  });
-});
+    if( results.length == 1 ) {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
 
-// 관리자 인증 토큰 재생성
-router.post('/re-admin', [
-  check('adminId', 'ID는 필수 입력 입니다..').exists().bail().notEmpty()
-], function( req, res, next ){
-  var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-  var payload = {
-    id : req.body.adminId
-  };
-  var secretOrPrivateKey = process.env.JWT_SECRET;
-  var options = {expiresIn: 60*60*24};
-  jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
-    if(err) return res.status(400).json(util.successFalse(err));
-    res.status(200).json(util.successTrue(token));
-  });
-});
-
-// 지점 인증 토큰 재생성
-router.post('/re-branch', [
-  check('brcofcBsnsRgnmb', '사업자 등록 번호는 필수 입력 입니다.').exists().bail().notEmpty()
-], function( req, res, next ){
-  var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-
-  models.branch.findOne( { where : { brcofcBsnsRgnmb : req.body.brcofcBsnsRgnmb } } ).then( result => {
-    if( !result ){
-      var errors = { message: '존재 하지 않는 사업자 등록 번호 입니다.' };
-      return res.status(400).json(util.successFalse(errors));
+      var payload = {
+        riderCelno : json[0].riderCelno
+      };
+      var secretOrPrivateKey = process.env.JWT_SECRET;
+      var options = {expiresIn: 60*60*24};
+      jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
+        if(err) return res.status(400).json(util.successFalse(err));
+        json[0].token = token;
+        res.status(200).json(util.successTrue(json[0]));
+      });
+    } else {
+      res.status(401).json(util.successFalse("휴대전화 번호가 일치 하지 않습니다."));
     }
-    var payload = {
-      brcofcBsnsRgnmb : result.brcofcBsnsRgnmb
-    };
-    var secretOrPrivateKey = process.env.JWT_SECRET;
-    var options = {expiresIn: 60*60*24};
-    jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
-      if(err) return res.status(400).json(util.successFalse(err));
-      res.status(200).json(util.successTrue(token));
-    });
-  }).catch( err => {
-    return res.status(400).json(util.successFalse(err));
-  });
-});
-
-// 상점 인증 토큰 재생성
-router.post('/re-store', [
-  check('stoBsnsRgnmb', '사업자 등록 번호는 필수 입력 입니다.').exists().bail().notEmpty()
-], function( req, res, next ){
-  var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-
-  models.store.findOne( { where : { stoBsnsRgnmb : req.body.stoBsnsRgnmb } } ).then( result => {
-    if( !result ){
-      var errors = { message: '존재 하지 않는 사업자 등록 번호 입니다.' };
-      return res.status(400).json(util.successFalse(errors));
-    }
-    var payload = {
-      stoBsnsRgnmb : result.stoBsnsRgnmb
-    };
-    var secretOrPrivateKey = process.env.JWT_SECRET;
-    var options = {expiresIn: 60*60*24};
-    jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
-      if(err) return res.status(400).json(util.successFalse(err));
-      res.status(200).json(util.successTrue(token));
-    });
-  }).catch( err => {
-    return res.status(400).json(util.successFalse(err));
-  });
-});
-// 라이더 인증 토큰 재생성
-router.post('/re-rider', [
-  check('riderCelno', '휴대전화 번호는 필수 입력 입니다.').exists().bail().notEmpty()
-], function( req, res, next ){
-  var errors = validationResult(req);
-  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-
-  models.rider.findOne( { where : { riderCelno : req.body.riderCelno } } ).then( result => {
-    if( !result ){
-      var errors = { message: '존재 하지 않는 휴대전화 번호 입니다.' };
-      return res.status(400).json(util.successFalse(errors));
-    }
-    var payload = {
-      riderCelno : result.riderCelno
-    };
-    var secretOrPrivateKey = process.env.JWT_SECRET;
-    var options = {expiresIn: 60*60*24};
-    jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
-      if(err) return res.status(400).json(util.successFalse(err));
-      res.status(200).json(util.successTrue(token));
-    });
-  }).catch( err => {
-    return res.status(400).json(util.successFalse(err));
   });
 });
 module.exports = router;

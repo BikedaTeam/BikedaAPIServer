@@ -5,26 +5,17 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 var authApi = require('./routes/auth');
-var branchApi = require('./routes/branch');
-var storeApi = require('./routes/store');
-var riderApi = require('./routes/rider');
+// var branchApi = require('./routes/branch');
+// var storeApi = require('./routes/store');
+// var riderApi = require('./routes/rider');
 var deliveryApi = require('./routes/delivery');
-var commonApi = require('./routes/common');
+// var commonApi = require('./routes/common');
 
-var sequelize = require('./models/index').sequelize;
 var app = express();
 
 var debug = require('debug')('bikedaapiserver:server');
 var http = require('http');
 require('dotenv').config();
-
-
-
-sequelize.sync( {force: false} ).then( () => {
- console.log( "MySql Connect.");
-}).catch( err => {
- console.log( err );
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -45,11 +36,11 @@ app.use(function(req, res, next) {
 
 // API routes
 app.use('/api/auth', authApi);
-app.use('/api/branch', branchApi);
-app.use('/api/store', storeApi);
-app.use('/api/rider', riderApi);
+// app.use('/api/branch', branchApi);
+// app.use('/api/store', storeApi);
+// app.use('/api/rider', riderApi);
 app.use('/api/delivery', deliveryApi);
-app.use('/api/common', commonApi);
+// app.use('/api/common', commonApi);
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);

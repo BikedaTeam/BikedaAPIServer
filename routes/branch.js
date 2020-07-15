@@ -10,16 +10,6 @@ var { check, validationResult } = require('express-validator');
 router.get('/', function( req, res, next ) {
   res.render('branch', { title: 'Bikeda 지점 API' });
 });
-
-// 바이크다 지점 전체 목록
-router.get('/branches', util.isLoggedin, function( req, res, next ) {
-  models.branch.findAll().then( result => {
-    return res.status(200).json( util.successTrue( result ) );
-  }).catch( err => {
-    return res.status(400).json( util.successFalse( err ) );
-  });
-});
-
 // 바이크다 지점 조회( 사업자 등록번호, 지점명, 상호, 대표자명 )
 router.get('/branch', util.isLoggedin, function( req, res, next ) {
   var reqParam = req.query || '';
@@ -28,16 +18,34 @@ router.get('/branch', util.isLoggedin, function( req, res, next ) {
   var brcofcMtlty     = reqParam.brcofcMtlty || '';
   var brcofcRprsntvNm = reqParam.brcofcRprsntvNm || '';
 
-  var query = 'select * from tb_branches where 1=1 ';
-  if( brcofcBsnsRgnmb ) query += 'and brcofcBsnsRgnmb like "%' + brcofcBsnsRgnmb + '%" ';
-  if( brcofcNm )        query += 'and brcofcNm like "%' + brcofcNm + '%" ';
-  if( brcofcMtlty )     query += 'and brcofcMtlty like "%' + brcofcMtlty + '%" ';
-  if( brcofcRprsntvNm ) query += 'and brcofcRprsntvNm like "%' + brcofcRprsntvNm + '%" ';
+  var sqlParam = {};
+  sqlParam.brcofcBsnsRgnmb = req.query.brcofcBsnsRgnmb;
+  sqlParam.brcofcNm = req.body.brcofcNm;
+  sqlParam.brcofcMtlty = req.body.brcofcMtlty;
+  sqlParam.brcofcRprsntvNm = req.body.brcofcRprsntvNm;
+  mysqlConnect('branch', 'selectBranch', sqlParam, function (error, results) {
+    if (error) {
+      console.log(error);
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    if( results.length == 1 ) {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
 
-  models.sequelize.query( query ).spread( function ( result, metadata ) {
-    return res.status(200).json( util.successTrue( result ) );
-  }, function ( err ) {
-    return res.status(400).json( util.successFalse( err ) );
+      var payload = {
+        riderCelno : json[0].riderCelno
+      };
+      var secretOrPrivateKey = process.env.JWT_SECRET;
+      var options = {expiresIn: 60*60*24};
+      jwt.sign(payload, secretOrPrivateKey, options, function(err, token){
+        if(err) return res.status(400).json(util.successFalse(err));
+        json[0].token = token;
+        console.log(json[0]);
+        res.status(200).json(util.successTrue(json[0]));
+      });
+    } else {
+      res.status(401).json(util.successFalse("휴대전화 번호가 일치 하지 않습니다."));
+    }
   });
 });
 
