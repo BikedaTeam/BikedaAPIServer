@@ -31,6 +31,5 @@
        AND  accounts.adminId = #{adminId}
        AND  accounts.adminPassword = #{adminPassword}
        AND  accounts.adminUseYn = 'Y'
-     </if>
-  </select>
+  </select>  
 </mapper>

@@ -47,6 +47,7 @@ router.post('/branch', [
   check('adminPassword', '관리자 ID / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
+  console.log(req.body);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   mysqlConnect('auth', 'branchLogin', req.body, function (error, results) {
     if (error) {

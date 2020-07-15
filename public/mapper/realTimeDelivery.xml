@@ -80,10 +80,8 @@
      ORDER
         BY  dlvr.dlvryRecvDt desc
   </select>
-
-
   <select id="realTimeDeliveryCount">
-    SELECT  dlvr.dlvryStateCd,
+    SELECT  dlvryStateCd,
             COUNT(*) AS dlvryCnt
       FROM  tb_deliveries AS dlvr
      WHERE  1=1
@@ -100,6 +98,6 @@
        AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
     </if>
      GROUP
-        BY  dlvr.dlvryStateCd
+        BY  dlvryStateCd
   </select>
 </mapper>

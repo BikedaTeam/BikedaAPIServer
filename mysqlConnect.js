@@ -12,10 +12,17 @@ var pool = mysql.createPool({  //커넥션 생성
 });
 
 mybatisMapper.createMapper([
+  // './public/mapper/branchLogin.xml',
   './public/mapper/auth.xml',
-  './public/mapper/delivery.xml'
+  './public/mapper/delivery.xml',
+  // './public/mapper/realTimeDelivery.xml',
+  // './public/mapper/realTimeDeliveryCount.xml',
+  // './public/mapper/registerDeliveryKey.xml',
+  // './public/mapper/registerDelivery.xml',
 ]);
 var query = function ( namespace, queryId, sqlParam, callback ) {
+  console.log('=== Query ID : ' + namespace + "." + queryId );
+
   pool.getConnection( function ( err, connection ) {
     if( err ) callback( err, null );
     else {
