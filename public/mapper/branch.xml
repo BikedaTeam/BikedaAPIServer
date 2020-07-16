@@ -219,4 +219,99 @@
        AND  stoMtlty LIKE CONCAT('%', #{stoMtlty} ,'%')
     </if>
   </select>
+  <!-- 상점 할증 -->
+  <select id="storeSurcharge">
+    SELECT	surcharge.stoId,
+      			surcharge.srchrSeCd,
+      			surcharge.srchrCn,
+      			surcharge.srchrAmnt,
+      			surcharge.srchrApplyYn
+      FROM	tb_store_surcharges AS surcharge
+     WHERE	surcharge.stoId = #{stoId}
+  </select>
+  <!-- 상점 지역 설정 -->
+  <select id="storeAreaSetting">
+    SELECT	areas.setSeqNo,
+      			areas.stoId,
+      			areas.setSdCd,
+      			(
+      			SELECT	sido.sdNm
+      			  FROM	tb_sidos AS sido
+      			 WHERE	areas.setSdCd = sido.sdCd
+      			) AS setSdNm,
+      			areas.setSggCd,
+      			(
+      			SELECT	sigungu.sggNm
+      			  FROM	tb_sigungus AS sigungu
+      			 WHERE	areas.setSdCd = sigungu.sdCd
+      			   AND	areas.setSggCd = sigungu.sggCd
+      			) AS setSggNm,
+      			areas.setEmdCd,
+      			(
+      			SELECT	emd.emdNm
+      			  FROM	tb_emds AS emd
+      			 WHERE	areas.setSdCd = emd.sdCd
+      			   AND	areas.setSggCd = emd.sggCd
+      			   AND	areas.setEmdCd = emd.emdCd
+      			) AS setEmdNm,
+      			areas.setRiCd,
+      			(
+      			SELECT	ri.riNm
+      			  FROM	tb_ris AS ri
+      			 WHERE	areas.setSdCd = ri.sdCd
+      			   AND	areas.setSggCd = ri.sggCd
+      			   AND	areas.setEmdCd = ri.emdCd
+      			   AND	areas.setRiCd= ri.riCd
+      			) AS setRiNm,
+      			areas.setAmnt
+      FROM	tb_store_area_settings AS areas
+     WHERE	areas.stoId = #{stoId}
+  </select>
+  <!-- 상점 지역 설정 좌표-->
+  <select id="storeAreaSettingCoordinate">
+    SELECT	coordinate.sdCd,
+      			coordinate.sggCd,
+      			coordinate.emdCd,
+      			coordinate.riCd,
+      			coordinate.crdntNo,
+      			coordinate.crdntSeqNo,
+      			coordinate.crdntLa,
+      			coordinate.crdntLo
+      FROM	tb_coordinates AS coordinate
+     WHERE	coordinate.sdCd = #{setSdCd}
+       AND	coordinate.sggCd = #{setSggCd}
+       AND	coordinate.emdCd = #{setEmdCd}
+       AND 	coordinate.riCd = #{setRiCd}
+     ORDER
+        BY  coordinate.crdntNo, coordinate.crdntSeqNo
+  </select>
+  <!-- 상점 거리 설정 -->
+  <select id="storeDistanceSetting">
+    SELECT	distances.stoId,
+      			distances.setStdDstnc,
+      			distances.setEndDstnc,
+      			distances.setAmnt
+      FROM	tb_store_distance_settings AS distances
+     WHERE	distances.stoId = #{stoId}
+  </select>
+  <!-- 상점 특별 설정 -->
+  <select id="storeSpecialSetting">
+    SELECT	special.setSeqNo,
+      			special.stoId,
+      			special.setNm,
+      			special.setAmnt
+      FROM	tb_store_special_settings AS special
+     WHERE	special.stoId = #{stoId}
+  </select>
+  <!-- 상점 특별 설정 좌표 -->
+  <select id="storeSpecialSettingLocation">
+    SELECT	specialLocation.lctnSeqNo,
+      			specialLocation.setSeqNo,
+      			specialLocation.stoId,
+      			specialLocation.lctnLa,
+      			specialLocation.lctnLo
+      FROM	tb_store_special_locations AS specialLocation
+     WHERE	specialLocation.setSeqNo = #{setSeqNo}
+       AND	specialLocation.stoId = #{stoId}
+  </select>
 </mapper>

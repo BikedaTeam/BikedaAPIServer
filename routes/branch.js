@@ -160,5 +160,77 @@ router.get('/stores', util.isLoggedin, function( req, res, next ) {
   });
 });
 
+// 상점 할증
+router.get('/storeSurcharge', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'storeSurcharge', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
+  });
+});
+
+// 상점 지역 설정
+router.get('/storeAreaSetting', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'storeAreaSetting', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
+  });
+});
+
+// 상점 지역 설정 좌표
+router.get('/storeAreaSettingCoordinate', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'storeAreaSettingCoordinate', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
+  });
+});
+
+
+// 상점 거리 설정
+router.get('/storeDistanceSetting', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'storeDistanceSetting', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
+  });
+});
+
+// 상점 특별 설정
+router.get('/storeSpecialSetting', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'storeSpecialSetting', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
+  });
+});
+
+// 상점 특별 설정
+router.get('/storeSpecialSettingLocation', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'storeSpecialSettingLocation', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
+  });
+});
 
 module.exports = router;
