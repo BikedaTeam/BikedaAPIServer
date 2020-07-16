@@ -12,13 +12,10 @@ var pool = mysql.createPool({  //커넥션 생성
 });
 
 mybatisMapper.createMapper([
-  // './public/mapper/branchLogin.xml',
-  './public/mapper/auth.xml',
-  './public/mapper/delivery.xml',
-  // './public/mapper/realTimeDelivery.xml',
-  // './public/mapper/realTimeDeliveryCount.xml',
-  // './public/mapper/registerDeliveryKey.xml',
-  // './public/mapper/registerDelivery.xml',
+  './public/mapper/branch.xml',
+  // './public/mapper/auth.xml',
+  // './public/mapper/delivery.xml',
+  // './public/mapper/rider.xml',
 ]);
 var query = function ( namespace, queryId, sqlParam, callback ) {
   console.log('=== Query ID : ' + namespace + "." + queryId );

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="rider">
+  <select id="searchRider">
+    SELECT	rider.riderId,
+      			rider.brcofcId,
+      			(
+      			SELECT	branch.brcofcNm
+      			  FROM	tb_branches AS branch
+      			 WHERE	rider.brcofcId = branch.brcofcId
+      			) AS brcofcNm,
+      			rider.riderCelno,
+      			rider.riderNm,
+      			rider.riderWthdrBankCd,
+      			(
+      			SELECT	bank.bankNm
+      			  FROM	tb_banks AS bank
+      			 WHERE	rider.riderWthdrBankCd = bank.bankCd
+      			) AS riderWthdrBankNm,
+      			rider.riderWthdrAcnt,
+      			rider.riderLoginYn,
+      			rider.riderMinWthdrAmnt,
+      			rider.riderCallLimit,
+      			rider.riderCallDelayTime,
+      			rider.riderStateCd
+      FROM	tb_riders AS rider
+     WHERE  1 = 1
+    <if test="brcofcId != null and !brcofcId.equal('')">
+       AND  brcofcId = #{brcofcId}
+    </if>
+    <if test="brcofcId != null and !brcofcId.equal('')">
+       AND  brcofcId = #{brcofcId}
+    </if>
+  </select>
+
+  
+</mapper>

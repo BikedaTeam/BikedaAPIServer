@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="delivery">
+  <!-- 실시간 배달 목록 -->
   <select id="realTimeDelivery">
     SELECT	dlvr.dlvryNo,
       			dlvr.stoBrcofcId,
@@ -69,10 +70,10 @@
        AND  dlvr.riderId = #{riderId}
       </if>
       <if test="dlvryRecvDtStd != null and !dlvryRecvDtStd.equal('')">
-       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") >= #{dlvryRecvDtStd}
+       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
       </if>
       <if test="dlvryRecvDtEnd != null and !dlvryRecvDtEnd.equal('')">
-       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <= #{dlvryRecvDtEnd}
+       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
       </if>
       <if test="dlvryStateCd != null and !dlvryStateCd.equal('')">
        AND  dlvr.dlvryStateCd = #{dlvryStateCd}
@@ -80,8 +81,7 @@
      ORDER
         BY  dlvr.dlvryRecvDt desc
   </select>
-
-
+  <!-- 실시간 배달 상태 수량 -->
   <select id="realTimeDeliveryCount">
     SELECT  dlvr.dlvryStateCd,
             COUNT(*) AS dlvryCnt
@@ -102,4 +102,168 @@
      GROUP
         BY  dlvr.dlvryStateCd
   </select>
+  <!-- 실시간 배차 가능 라이더 목록 -->
+  <select id="realTimeDispatchRider">
+    SELECT	rider.riderId,
+      			rider.brcofcId,
+      			rider.riderCelno,
+      			rider.riderNm,
+      			rider.riderCallLimit,
+      			rider.riderStateCd,
+            (
+            SELECT  COUNT(*)
+              FROM  tb_deliveries AS delivery
+             WHERE  rider.riderId = delivery.riderId
+               AND  delivery.dlvryStateCd IN ('02','03')
+            ) AS riderDsptCnt
+      FROM	tb_riders AS rider
+     WHERE	1 = 1
+       AND	rider.brcofcId = #{brcofcId}
+       AND	rider.riderLoginYn = 'Y'
+       AND	rider.riderStateCd = '01'
+  </select>
+  <!-- 주문 번호 검증 -->
+  <select id="validateDelivery">
+    SELECT  IFNUlL( COUNT(*), 0 ) AS dlvryCnt
+      FROM  tb_deliveries
+     WHERE  dlvryNo = #{dlvryNo}
+  </select>
+  <!-- 실시간 배차 -->
+  <update id="realTimeDispatch">
+    UPDATE  tb_deliveries
+       SET  dlvryStateCd = '02',
+            dlvryDsptcDt = date_format(now(), "%Y%m%d%H%i%s"),
+            riderId = #{riderId},
+            riderBrcofcId = #{riderBrcofcId}
+     WHERE  dlvryNo = #{dlvryNo}
+  </update>
+  <!-- 실시간 배달 취소 -->
+  <update id="realTimeCancelDelivery">
+    UPDATE  tb_deliveries
+       SET  dlvryStateCd = '05'
+     WHERE  dlvryNo = #{dlvryNo}
+  </update>
+
+  <select id="registDeliveryKey">
+    SELECT  CAST(
+              CONCAT( #{stoId},
+                      'O',
+                      date_format(now(), '%Y%m%d'),
+                      LPAD( CONCAT( IFNULL( MAX( CAST( SUBSTR( dlvryNo, 15 ) AS unsigned ) ) , 0 ) + 1 ), 5, '0' )
+                     ) AS char ) AS dlvryNo
+      FROM  tb_deliveries
+     WHERE  stoId = #{stoId}
+       AND  date_format(dlvryRecvDt, '%Y%m%d') = date_format(now(), '%Y%m%d')
+  </select>
+  <insert id="registDelivery">
+    INSERT
+      INTO  tb_deliveries
+            (
+            dlvryNo,
+            stoBrcofcId,
+            stoId,
+            dlvryCusTelno,
+            dlvryCusAdres,
+            dlvryCusRoadAdres,
+            <if test="dlvryCusDetlAdres != null and !dlvryCusDetlAdres.equal('')">
+            dlvryCusDetlAdres,
+            </if>
+            dlvryCusLa,
+            dlvryCusLo,
+            dlvryPaySeCd,
+            dlvryFoodAmnt,
+            dlvryAmnt,
+            dlvryPickReqTm,
+            dlvryRecvDt,
+            dlvryDstnc,
+            <if test="dlvryReqCn != null and !dlvryReqCn.equal('')">
+            dlvryReqCn,
+            </if>
+            dlvryStateCd
+
+            )
+    VALUES  (
+            #{dlvryNo},
+            #{stoBrcofcId},
+            #{stoId},
+            #{dlvryCusTelno},
+            #{dlvryCusAdres},
+            #{dlvryCusRoadAdres},
+            <if test="dlvryCusDetlAdres != null and !dlvryCusDetlAdres.equal('')">
+            #{dlvryCusDetlAdres},
+            </if>
+            #{dlvryCusLa},
+            #{dlvryCusLo},
+            #{dlvryPaySeCd},
+            #{dlvryFoodAmnt},
+            #{dlvryAmnt},
+            #{dlvryPickReqTm},
+            date_format(now(), "%Y%m%d%H%i%s"),
+            #{dlvryDstnc},
+            <if test="dlvryReqCn != null and !dlvryReqCn.equal('')">
+            #{dlvryReqCn}
+            </if>
+            '01'
+            )
+  </insert>
+
+  <update id="modifyDelivery">
+    UPDATE  tb_deliveries
+    <set>
+      <if test="dlvryCusTelno != null and !dlvryCusTelno.equal('')">
+        dlvryCusTelno = #{dlvryCusTelno}
+      </if>
+      <if test="dlvryCusAdres != null and !dlvryCusAdres.equal('')">
+        dlvryCusAdres = #{dlvryCusAdres}
+      </if>
+      <if test="dlvryCusRoadAdres != null and !dlvryCusRoadAdres.equal('')">
+        dlvryCusRoadAdres = #{dlvryCusRoadAdres}
+      </if>
+      <if test="dlvryCusDetlAdres != null and !dlvryCusDetlAdres.equal('')">
+        dlvryCusDetlAdres = #{dlvryCusDetlAdres}
+      </if>
+      <if test="dlvryCusLa != null and !dlvryCusLa.equal('')">
+        dlvryCusLa = #{dlvryCusLa}
+      </if>
+      <if test="dlvryCusLo != null and !dlvryCusLo.equal('')">
+        dlvryCusLo = #{dlvryCusLo}
+      </if>
+      <if test="dlvryPaySeCd != null and !dlvryPaySeCd.equal('')">
+        dlvryPaySeCd = #{dlvryPaySeCd}
+      </if>
+      <if test="dlvryFoodAmnt != null and !dlvryFoodAmnt.equal('')">
+        dlvryFoodAmnt = #{dlvryFoodAmnt}
+      </if>
+      <if test="dlvryAmnt != null and !dlvryAmnt.equal('')">
+        dlvryAmnt = #{dlvryAmnt}
+      </if>
+      <if test="dlvryPickReqTm != null and !dlvryPickReqTm.equal('')">
+        dlvryPickReqTm = #{dlvryPickReqTm}
+      </if>
+      <if test="dlvryDstnc != null and !dlvryDstnc.equal('')">
+        dlvryDstnc = #{dlvryDstnc}
+      </if>
+    </set>
+     WHERE  dlvryNo = #{dlvryNo}
+  </update>
+  <update id="dispatchDelivery">
+    UPDATE  tb_deliveries
+       SET  dlvryStateCd = '02',
+            dlvryDsptcDt = date_format(now(), "%Y%m%d%H%i%s")
+     WHERE  dlvryNo = #{dlvryNo}
+  </update>
+  <update id="pickUpDelivery">
+    UPDATE  tb_deliveries
+       SET  dlvryStateCd = '03',
+            dlvryPickDt = date_format(now(), "%Y%m%d%H%i%s")
+     WHERE  dlvryNo = #{dlvryNo}
+  </update>
+  <update id="completDelivery">
+    UPDATE  tb_deliveries
+       SET  dlvryStateCd = '04',
+            dlvryTcDt = date_format(now(), "%Y%m%d%H%i%s")
+     WHERE  dlvryNo = #{dlvryNo}
+  </update>
+
+
 </mapper>

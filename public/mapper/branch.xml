@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="branch">
+  <!-- 로그인 -->
+  <select id="login">
+    SELECT	accounts.adminId,
+      			accounts.brcofcId,
+      			accounts.adminNm,
+      			accounts.adminCelno,
+      			accounts.adminGradeCd,
+            branch.brcofcBsnsRgnmb,
+            branch.brcofcNm,
+            branch.brcofcMtlty,
+            branch.brcofcBizSeCd,
+            branch.brcofcRprsntvNm,
+            branch.brcofcBrdYmd,
+            branch.brcofcCrprtRgnmb,
+            branch.brcofcOpnngYmd,
+            branch.brcofcBsnsPlaceAdres,
+            branch.brcofcHdofcAdres,
+            branch.brcofcBizcnd,
+            branch.brcofcInduty,
+            branch.brcofcTelno,
+            branch.brcofcVrtlAcnt,
+            branch.brcofcFeeSeCd,
+            branch.brcofcFeeAmnt,
+            branch.brcofcFeeRate,
+            branch.brcofcStateCd
+      FROM	tb_branch_accounts AS accounts,
+            tb_branches AS branch
+     WHERE	accounts.brcofcId = branch.brcofcId
+       AND  accounts.adminId = #{adminId}
+       AND  accounts.adminPassword = #{adminPassword}
+       AND  accounts.adminUseYn = 'Y'
+  </select>
+  <!-- 실시간 배달 목록 -->
+  <select id="realTimeDelivery">
+    SELECT	dlvr.dlvryNo,
+      			dlvr.stoBrcofcId,
+      			IFNULL((
+      			SELECT	branch.brcofcNm
+      			  FROM	tb_branches AS branch
+      			 WHERE	dlvr.stoBrcofcId = branch.brcofcId
+      			),"") AS stoBrcofcNm,
+      			dlvr.stoId,
+      			IFNULL((
+      			SELECT	store.stoMtlty
+      			  FROM	tb_stores AS store
+      			 WHERE	dlvr.stoId = store.stoId
+      			),"") AS stoMtlty,
+      			IFNULL((
+      			SELECT	store.stoTelno
+      			  FROM	tb_stores AS store
+      			 WHERE	dlvr.stoId = store.stoId
+      			),"") AS stoTelno,
+      			dlvr.dlvryCusTelno,
+      			dlvr.dlvryCusAdres,
+      			dlvr.dlvryCusRoadAdres,
+      			dlvr.dlvryCusDetlAdres,
+      			dlvr.dlvryCusLa,
+      			dlvr.dlvryCusLo,
+      			dlvr.dlvryPaySeCd,
+      			dlvr.dlvryFoodAmnt,
+      			dlvr.dlvryAmnt,
+      			dlvr.dlvryPickReqTm,
+      			date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") dlvryRecvDt,
+      			date_format(dlvr.dlvryDsptcDt, "%Y%m%d%H%i%s") dlvryDsptcDt,
+      			date_format(dlvr.dlvryPickDt, "%Y%m%d%H%i%s") dlvryPickDt,
+      			date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") dlvryTcDt,
+      			dlvr.dlvryDstnc,
+      			dlvr.dlvryStateCd,
+      			dlvr.dlvryReqCn,
+      			dlvr.riderBrcofcId,
+      			IFNULL((
+      			SELECT	branch.brcofcNm
+      			  FROM	tb_branches AS branch
+      			 WHERE	dlvr.riderBrcofcId = branch.brcofcId
+      			),"") AS riderBrcofcNm,
+      			dlvr.riderId,
+      			IFNULL((
+      			SELECT	rider.riderNm
+      			  FROM	tb_riders AS rider
+      			 WHERE	dlvr.riderId = rider.riderId
+      			),"") AS riderNm,
+      			IFNULL((
+      			SELECT	rider.riderCelno
+      			  FROM	tb_riders AS rider
+      			 WHERE	dlvr.riderId = rider.riderId
+      			),"") AS riderCelno
+      FROM	tb_deliveries AS dlvr
+     WHERE  1 = 1
+       AND  dlvr.stoBrcofcId = #{stoBrcofcId}
+       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
+       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
+     ORDER
+        BY  dlvr.dlvryRecvDt desc
+  </select>
+  <!-- 실시간 배달 상태 수량 -->
+  <select id="realTimeDeliveryCount">
+    SELECT  dlvr.dlvryStateCd,
+            COUNT(*) AS dlvryCnt
+      FROM  tb_deliveries AS dlvr
+     WHERE  1=1
+    <if test="stoBrcofcId != null and !stoBrcofcId.equal('')">
+       AND  dlvr.stoBrcofcId = #{stoBrcofcId}
+    </if>
+    <if test="riderBrcofcId != null and !riderBrcofcId.equal('')">
+       AND  dlvr.riderBrcofcId = #{riderBrcofcId}
+    </if>
+    <if test="dlvryRecvDtStd != null and !dlvryRecvDtStd.equal('')">
+       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
+    </if>
+    <if test="dlvryRecvDtEnd != null and !dlvryRecvDtEnd.equal('')">
+       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
+    </if>
+     GROUP
+        BY  dlvr.dlvryStateCd
+  </select>
+  <!-- 실시간 배차 가능 라이더 목록 -->
+  <select id="realTimeDispatchRider">
+    SELECT	rider.riderId,
+      			rider.brcofcId,
+      			rider.riderCelno,
+      			rider.riderNm,
+      			rider.riderCallLimit,
+      			rider.riderStateCd,
+            (
+            SELECT  COUNT(*)
+              FROM  tb_deliveries AS delivery
+             WHERE  rider.riderId = delivery.riderId
+               AND  delivery.dlvryStateCd IN ('02','03')
+            ) AS riderDsptCnt
+      FROM	tb_riders AS rider
+     WHERE	1 = 1
+       AND	rider.brcofcId = #{brcofcId}
+       AND	rider.riderLoginYn = 'Y'
+       AND	rider.riderStateCd = '01'
+  </select>
+  <!-- 주문 번호 검증 -->
+  <select id="validateDelivery">
+    SELECT  IFNUlL( COUNT(*), 0 ) AS dlvryCnt
+      FROM  tb_deliveries
+     WHERE  dlvryNo = #{dlvryNo}
+  </select>
+  <!-- 실시간 배차 -->
+  <update id="realTimeDispatch">
+    UPDATE  tb_deliveries
+       SET  dlvryStateCd = '02',
+            dlvryDsptcDt = date_format(now(), "%Y%m%d%H%i%s"),
+            riderId = #{riderId},
+            riderBrcofcId = #{riderBrcofcId}
+     WHERE  dlvryNo = #{dlvryNo}
+  </update>
+  <!-- 실시간 배달 취소 -->
+  <update id="realTimeCancelDelivery">
+    UPDATE  tb_deliveries
+       SET  dlvryStateCd = '05'
+     WHERE  dlvryNo = #{dlvryNo}
+  </update>
+  <!-- 실시간 라이더 목록 -->
+  <select id="realTimeRider">
+    SELECT	rider.riderId,
+      			rider.brcofcId,
+      			rider.riderNm,
+      			rider.riderCelno,
+      			rider.riderStateCd,
+      			location.riderLa,
+      			location.riderLo
+      FROM	tb_riders AS rider,
+      			tb_rider_locations AS location
+     WHERE	rider.riderId = location.riderId
+       AND  rider.brcofcId = #{brcofcId}
+  </select>
+  <!-- 실시간 라이더 배달 목록 -->
+  <select id="realTimeRiderDelivery">
+    SELECT	IFNULL((
+      			SELECT	store.stoMtlty
+      			  FROM	tb_stores AS store
+      			 WHERE	dlvr.stoId = store.stoId
+      			),"") AS stoMtlty,
+      			dlvr.dlvryCusRoadAdres,
+      			dlvr.dlvryCusDetlAdres,
+      			dlvr.dlvryCusLa,
+      			dlvr.dlvryCusLo,
+      			dlvr.dlvryStateCd
+      FROM	tb_deliveries AS dlvr
+     WHERE  1 = 1
+       AND  dlvr.riderId = #{riderId}
+     ORDER
+        BY  dlvr.dlvryRecvDt desc
+  </select>
+  <!-- 상점 목록 -->
+  <select id="stores">
+    SELECT	store.stoId,
+      			store.stoBsnsRgnmb,
+      			store.stoMtlty,
+      			store.stoBizSeCd,
+      			store.stoRprsntvNm,
+      			store.stoBrdYmd,
+      			store.stoCrprtRgnmb,
+      			store.stoOpnngYmd,
+      			store.stoBsnsPlaceAdres,
+      			store.stoHdofcAdres,
+      			store.stoBizcnd,
+      			store.stoInduty,
+      			store.stoTelno,
+      			store.stoVrtlAcnt,
+      			store.stoSetSeCd,
+      			store.stoNightSrchrApplyYn,
+      			store.stoNightSrchrStdTm,
+      			store.stoNightSrchrEndTm,
+      			store.stoNightSrchrAmnt,
+      			store.stoLa,
+      			store.stoLo,
+      			store.stoStateCd
+      FROM	tb_stores AS store
+     WHERE	store.brcofcId = #{brcofcId}
+    <if test="stoMtlty != null and !stoMtlty.equal('')">
+       AND  stoMtlty LIKE CONCAT('%', #{stoMtlty} ,'%')
+    </if>
+  </select>
+</mapper>
