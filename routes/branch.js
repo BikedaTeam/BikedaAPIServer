@@ -44,10 +44,11 @@ router.get('/realTimeDelivery', function( req, res, next ) {
   mysqlConnect('branch', 'realTimeDelivery', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
-    }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
+    } 
   });
 });
 
@@ -56,10 +57,11 @@ router.get('/realTimeDeliveryCount', util.isLoggedin, function( req, res, next )
   mysqlConnect('branch', 'realTimeDeliveryCount', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -68,10 +70,11 @@ router.get('/realTimeDispatchRider', util.isLoggedin, function( req, res, next) 
   mysqlConnect('branch', 'realTimeDispatchRider', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -87,10 +90,11 @@ router.post('/realTimeDispatch', util.isLoggedin, function( req, res, next) {
       mysqlConnect('branch', 'realTimeDispatch', req.body, function (error, results) {
         if (error) {
           res.status(500).json(util.successFalse("SQL Error"));
+        } else {
+          var string = JSON.stringify(results);
+          var json =  JSON.parse(string);
+          res.status(200).json(util.successTrue(json));
         }
-        var string = JSON.stringify(results);
-        var json =  JSON.parse(string);
-        res.status(200).json(util.successTrue(json));
       });
     } else {
       res.status(401).json(util.successFalse("등록 되지 않은 주문 번호 입니다."));
@@ -114,10 +118,11 @@ router.post('/realTimeCancelDelivery', util.isLoggedin, [
       mysqlConnect('branch', 'realTimeCancelDelivery', req.body, function (error, results) {
         if (error) {
           res.status(500).json(util.successFalse("SQL Error"));
+        } else {
+          var string = JSON.stringify(results);
+          var json =  JSON.parse(string);
+          res.status(200).json(util.successTrue(json));
         }
-        var string = JSON.stringify(results);
-        var json =  JSON.parse(string);
-        res.status(200).json(util.successTrue(json));
       });
     } else {
       res.status(401).json(util.successFalse("등록 되지 않은 주문 번호 입니다."));
@@ -130,10 +135,11 @@ router.get('/realTimeRider', util.isLoggedin, function( req, res, next ) {
   mysqlConnect('branch', 'realTimeRider', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 // 실시간 라이더 배달 내용 조회
@@ -141,10 +147,11 @@ router.get('/realTimeRiderDelivery', util.isLoggedin, function( req, res, next )
   mysqlConnect('branch', 'realTimeRiderDelivery', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -153,10 +160,11 @@ router.get('/stores', util.isLoggedin, function( req, res, next ) {
   mysqlConnect('branch', 'stores', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -165,10 +173,11 @@ router.get('/storeSurcharge', util.isLoggedin, function( req, res, next ) {
   mysqlConnect('branch', 'storeSurcharge', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -177,10 +186,11 @@ router.get('/storeAreaSetting', util.isLoggedin, function( req, res, next ) {
   mysqlConnect('branch', 'storeAreaSetting', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -189,10 +199,11 @@ router.get('/storeAreaSettingCoordinate', util.isLoggedin, function( req, res, n
   mysqlConnect('branch', 'storeAreaSettingCoordinate', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -202,10 +213,11 @@ router.get('/storeDistanceSetting', util.isLoggedin, function( req, res, next ) 
   mysqlConnect('branch', 'storeDistanceSetting', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -214,10 +226,11 @@ router.get('/storeSpecialSetting', util.isLoggedin, function( req, res, next ) {
   mysqlConnect('branch', 'storeSpecialSetting', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
@@ -226,11 +239,60 @@ router.get('/storeSpecialSettingLocation', util.isLoggedin, function( req, res, 
   mysqlConnect('branch', 'storeSpecialSettingLocation', req.query, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
     }
-    var string = JSON.stringify(results);
-    var json =  JSON.parse(string);
-    res.status(200).json(util.successTrue(json));
   });
 });
 
+// 상점 수정
+router.post('/storeModify', util.isLoggedin, [
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').optional().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('stoBsnsRgnmb','사업자 번호는 (-)를 제외한 10자리 숫자를 입력해 주세요.').optional().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('stoPassword','비밀번호가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoMtlty','상호가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoBizSeCd','사업자 구분 코드는 (01: 개인 사업자, 02: 법인 사업자)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
+  check('stoRprsntvNm','대표자명이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoBrdYmd','대표자 생년월일은 YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').if(check('stoBizSeCd').isIn(['01'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('stoCrprtRgnmb','법인 등록 번호는 (-)를 제외한 13자리 숫자를 입력해 주세요.').if(check('stoBizSeCd').isIn(['02'])).optional().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
+  check('stoOpnngYmd','개업 생년월일은 YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231).').optional().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('stoBsnsPlaceAdres','사업장 주소가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoBizcnd','업태가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoInduty','업종이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('stoTelno','연락처는 (-)를 제외한 숫자로 입력해 주세요.').optional().notEmpty().isNumeric(),
+  check('stoSetSeCd','설정 구분 코드는 (01: 거리, 02: 지역)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
+  check('stoNightSrchrApplyYn','야간 할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N']),
+  check('stoNightSrchrStdTm','야간 할증 시작 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
+  check('stoNightSrchrEndTm','야간 할증 종료 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
+  check('stoNightSrchrAmnt','야간 할증 수수료 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric(),
+  check('stoLa','위도는 소수점 20자리 까지 입력 가능 합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('stoLo','경도는 소수점 20자리 까지 입력 가능 합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('stoStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+  mysqlConnect('branch', 'validateStore', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    if( json[0].stoId == 1 ) {
+      mysqlConnect('branch', 'storeModify', req.body, function (error, results) {
+        if (error) {
+          res.status(500).json(util.successFalse("SQL Error"));
+        } else {
+          var string = JSON.stringify(results);
+          var json =  JSON.parse(string);
+          res.status(200).json(util.successTrue(json));
+        }
+      });
+    } else {
+      res.status(401).json(util.successFalse("등록 되지 않은 상점 입니다."));
+    }
+  });
+});
 module.exports = router;

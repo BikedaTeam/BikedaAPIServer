@@ -314,4 +314,32 @@
      WHERE	specialLocation.setSeqNo = #{setSeqNo}
        AND	specialLocation.stoId = #{stoId}
   </select>
+  <!-- 상점 검증 -->
+  <select id="validateStore">
+    SELECT  IFNUlL( COUNT(*), 0 ) AS stoId
+      FROM  tb_stores
+     WHERE  stoId = #{stoId}
+  </select>
+  <!-- 상점 수정 -->
+  <update id="storeModify">
+    UPDATE  tb_stores
+    <set>
+            stoBsnsRgnmb = #{stoBsnsRgnmb},
+            stoMtlty = #{stoMtlty},
+            stoRprsntvNm = #{stoRprsntvNm},
+            stoBrdYmd = #{stoBrdYmd},
+            stoCrprtRgnmb = #{stoCrprtRgnmb},
+            stoOpnngYmd = #{stoOpnngYmd},
+            stoBsnsPlaceAdres = #{stoBsnsPlaceAdres},
+            stoHdofcAdres = #{stoHdofcAdres},
+            stoBizcnd = #{stoBizcnd},
+            stoInduty = #{stoInduty},
+            stoTelno = #{stoTelno},
+            stoVrtlAcnt = #{stoVrtlAcnt},
+            stoStateCd = #{stoStateCd},
+            stoBizSeCd = #{stoBizSeCd}
+      </if>
+    </set>
+     WHERE  stoId = #{stoId}
+  </update>
 </mapper>
