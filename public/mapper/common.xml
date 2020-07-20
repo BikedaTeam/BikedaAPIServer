@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="common">
+  <!-- 시도  -->
+  <select id="sido">
+    SELECT	sido.sdCd,
+      			sido.sdNm
+      FROM	tb_sidos AS sido
+  </select>
+
+  <!-- 시군구   -->
+  <select id="sigungu">
+    SELECT	sigungu.sdCd,
+        		sigungu.sggCd,
+        		sigungu.sggNm
+      FROM	tb_sigungus AS sigungu
+     WHERE	sigungu.sdCd = #{sdCd}
+  </select>
+
+  <!-- 읍면동   -->
+  <select id="emd">
+    SELECT	emd.sdCd,
+      			emd.sggCd,
+      			emd.emdCd,
+      			emd.emdNm
+      FROM	tb_emds AS emd
+     WHERE	emd.sdCd = #{sdCd}
+       AND  emd.sggCd = #{sggCd}
+  </select>
+
+  <!-- 라   -->
+  <select id="ri">
+    SELECT	ri.sdCd,
+      			ri.sggCd,
+      			ri.emdCd,
+      			ri.riCd,
+      			ri.riNm
+      FROM	tb_ris AS ri
+     WHERE	ri.sdCd = #{sdCd}
+       AND  ri.sggCd = #{sggCd}
+       AND  ri.emdCd = #{emdCd}
+  </select>
+</mapper>

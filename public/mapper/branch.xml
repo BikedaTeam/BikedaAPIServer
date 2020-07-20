@@ -287,7 +287,8 @@
   </select>
   <!-- 상점 거리 설정 -->
   <select id="storeDistanceSetting">
-    SELECT	distances.stoId,
+    SELECT	distances.setSeqNo,
+            distances.stoId,
       			distances.setStdDstnc,
       			distances.setEndDstnc,
       			distances.setAmnt
@@ -338,8 +339,29 @@
             stoVrtlAcnt = #{stoVrtlAcnt},
             stoStateCd = #{stoStateCd},
             stoBizSeCd = #{stoBizSeCd}
-      </if>
     </set>
      WHERE  stoId = #{stoId}
+  </update>
+  <!-- 상점 야간 할증 수정 -->
+  <update id="storeModifyNightSurcharge">
+    UPDATE  tb_stores
+    <set>
+            stoNightSrchrApplyYn = #{stoNightSrchrApplyYn},
+            stoNightSrchrStdTm = #{stoNightSrchrStdTm},
+            stoNightSrchrEndTm = #{stoNightSrchrEndTm},
+            stoNightSrchrAmnt = #{stoNightSrchrAmnt}
+    </set>
+     WHERE  stoId = #{stoId}
+  </update>
+  <!-- 상점 야간 할증 수정 -->
+  <update id="storeModifySurcharge">
+    UPDATE  tb_store_surcharges
+    <set>
+            srchrCn = #{srchrCn},
+            srchrAmnt = #{srchrAmnt},
+            srchrApplyYn = #{srchrApplyYn}
+    </set>
+     WHERE  stoId = #{stoId}
+       AND  srchrSeCd = #{srchrSeCd}
   </update>
 </mapper>

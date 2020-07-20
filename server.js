@@ -4,12 +4,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
+var commonApi = require('./routes/common');
 var branchApi = require('./routes/branch');
 // var authApi = require('./routes/auth');
 // var storeApi = require('./routes/store');
 // var riderApi = require('./routes/rider');
 // var deliveryApi = require('./routes/delivery');
-// var commonApi = require('./routes/common');
+
 
 var app = express();
 
@@ -35,13 +36,14 @@ app.use(function(req, res, next) {
 });
 
 // API routes
+app.use('/api/common', commonApi);
 app.use('/api/branch', branchApi);
 
 // app.use('/api/auth', authApi);
 // app.use('/api/store', storeApi);
 // app.use('/api/rider', riderApi);
 // app.use('/api/delivery', deliveryApi);
-// app.use('/api/common', commonApi);
+
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);

@@ -11,7 +11,6 @@ router.post('/login', [
   check('adminPassword', '관리자 ID / 비밀번호는 필수 입력 입니다').exists().bail().notEmpty()
 ], function( req, res, next ){
   var errors = validationResult(req);
-  console.log(req.body);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
   mysqlConnect('branch', 'login', req.body, function (error, results) {
     if (error) {
@@ -48,7 +47,7 @@ router.get('/realTimeDelivery', function( req, res, next ) {
       var string = JSON.stringify(results);
       var json =  JSON.parse(string);
       res.status(200).json(util.successTrue(json));
-    } 
+    }
   });
 });
 
@@ -264,10 +263,6 @@ router.post('/storeModify', util.isLoggedin, [
   check('stoInduty','업종이 입력 되지 않았습니다.').optional().notEmpty(),
   check('stoTelno','연락처는 (-)를 제외한 숫자로 입력해 주세요.').optional().notEmpty().isNumeric(),
   check('stoSetSeCd','설정 구분 코드는 (01: 거리, 02: 지역)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02']),
-  check('stoNightSrchrApplyYn','야간 할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N']),
-  check('stoNightSrchrStdTm','야간 할증 시작 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
-  check('stoNightSrchrEndTm','야간 할증 종료 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
-  check('stoNightSrchrAmnt','야간 할증 수수료 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric(),
   check('stoLa','위도는 소수점 20자리 까지 입력 가능 합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
   check('stoLo','경도는 소수점 20자리 까지 입력 가능 합니다.').optional().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
   check('stoStateCd','상태 코드는(01: 계약, 02:해지)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02'])
@@ -295,4 +290,81 @@ router.post('/storeModify', util.isLoggedin, [
     }
   });
 });
+
+// 상점 야간 할증 수정
+router.post('/storeModifyNightSurcharge', util.isLoggedin, [
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('stoNightSrchrApplyYn','야간 할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N']),
+  check('stoNightSrchrStdTm','야간 할증 시작 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
+  check('stoNightSrchrEndTm','야간 할증 종료 시간은 hhmmss 형식으로 입력해 주세요.(ex : 235959).').optional().notEmpty().bail().isNumeric().isLength({ min: 6, max: 6 }),
+  check('stoNightSrchrAmnt','야간 할증 수수료 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric()
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+  mysqlConnect('branch', 'validateStore', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    if( json[0].stoId == 1 ) {
+      mysqlConnect('branch', 'storeModifyNightSurcharge', req.body, function (error, results) {
+        if (error) {
+          res.status(500).json(util.successFalse("SQL Error"));
+        } else {
+          var surchargeArray = req.body.surcharge;
+          for( var i = 0; i < surchargeArray.length; i++){
+            var surcharge = surchargeArray[i];
+            mysqlConnect('branch', 'storeModifySurcharge', surcharge, function (error, results) {
+              if (error) {
+                res.status(500).json(util.successFalse("SQL Error"));
+              }
+            });
+          }
+
+          var string = JSON.stringify(results);
+          var json =  JSON.parse(string);
+          res.status(200).json(util.successTrue(json));
+        }
+      });
+    } else {
+      res.status(401).json(util.successFalse("등록 되지 않은 상점 입니다."));
+    }
+  });
+});
+
+// 상점 할증 수정
+router.post('/storeModifySurcharge', util.isLoggedin, [
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('srchrSeCd','할증 구분 코드는(01 ~ 06)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03','04','05','06']),
+  check('srchrApplyYn','할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N']),
+  check('srchrAmnt','할증 수수료 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric()
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+
+
+  mysqlConnect('branch', 'validateStore', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    if( json[0].stoId == 1 ) {
+      mysqlConnect('branch', 'storeModifySurcharge', req.body, function (error, results) {
+        if (error) {
+          res.status(500).json(util.successFalse("SQL Error"));
+        } else {
+          var string = JSON.stringify(results);
+          var json =  JSON.parse(string);
+          res.status(200).json(util.successTrue(json));
+        }
+      });
+    } else {
+      res.status(401).json(util.successFalse("등록 되지 않은 상점 입니다."));
+    }
+  });
+});
+
 module.exports = router;
