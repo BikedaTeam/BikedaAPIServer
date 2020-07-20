@@ -14,9 +14,6 @@ var pool = mysql.createPool({  //커넥션 생성
 mybatisMapper.createMapper([
   './public/mapper/common.xml',
   './public/mapper/branch.xml',
-  // './public/mapper/auth.xml',
-  // './public/mapper/delivery.xml',
-  // './public/mapper/rider.xml',
 ]);
 var query = function ( namespace, queryId, sqlParam, callback ) {
   console.log('=== Query ID : ' + namespace + "." + queryId );
