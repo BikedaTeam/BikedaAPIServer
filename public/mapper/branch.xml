@@ -107,12 +107,8 @@
     <if test="riderBrcofcId != null and !riderBrcofcId.equal('')">
        AND  dlvr.riderBrcofcId = #{riderBrcofcId}
     </if>
-    <if test="dlvryRecvDtStd != null and !dlvryRecvDtStd.equal('')">
        AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
-    </if>
-    <if test="dlvryRecvDtEnd != null and !dlvryRecvDtEnd.equal('')">
        AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
-    </if>
      GROUP
         BY  dlvr.dlvryStateCd
   </select>
@@ -216,7 +212,7 @@
       FROM	tb_stores AS store
      WHERE	store.brcofcId = #{brcofcId}
     <if test="stoMtlty != null and !stoMtlty.equal('')">
-       AND  stoMtlty LIKE CONCAT('%', #{stoMtlty} ,'%')
+       AND  store.stoMtlty LIKE CONCAT('%', #{stoMtlty} ,'%')
     </if>
   </select>
   <!-- 상점 할증 -->
@@ -363,5 +359,67 @@
     </set>
      WHERE  stoId = #{stoId}
        AND  srchrSeCd = #{srchrSeCd}
+  </update>
+  <!-- 상점 지역 설정 추가 -->
+  <insert id="storeModifyFeeAreaInst">
+    INSERT
+      INTO  tb_store_area_settings
+            (
+            stoId,
+            setSdCd,
+            setSggCd,
+            setEmdCd,
+            setRiCd,
+            setAmnt
+            )
+    VALUES  (
+            #{stoId},
+            #{setSdCd},
+            #{setSggCd},
+            #{setEmdCd},
+            #{setRiCd},
+            #{setAmnt}
+            )
+  </insert>
+  <!-- 상점 지역 설정 변경 -->
+  <update id="storeModifyFeeAreaUpdt">
+    UPDATE  tb_store_area_settings
+    <set>
+            setSdCd = #{setSdCd},
+            setSggCd = #{setSggCd},
+            setEmdCd = #{setEmdCd},
+            setRiCd = #{setRiCd},
+            setAmnt = #{setAmnt}
+    </set>
+     WHERE  stoId = #{stoId}
+       AND  setSeqNo = #{setSeqNo}
+  </update>
+  <!-- 상점 구간 설정 추가 -->
+  <insert id="storeModifyFeeDdistanceInst">
+    INSERT
+      INTO  tb_store_distance_settings
+            (
+            stoId,
+            setStdDstnc,
+            setEndDstnc,
+            setAmnt
+            )
+    VALUES  (
+            #{stoId},
+            #{setStdDstnc},
+            #{setEndDstnc},
+            #{setAmnt}
+            )
+  </insert>
+  <!-- 상정 구간 설정 변경 -->
+  <update id="storeModifyFeeDistanceUpdt">
+    UPDATE  tb_store_distance_settings
+    <set>
+            setStdDstnc = #{setStdDstnc},
+            setEndDstnc = #{setEndDstnc},
+            setAmnt = #{setAmnt}
+    </set>
+     WHERE  stoId = #{stoId}
+       AND  setSeqNo = #{setSeqNo}
   </update>
 </mapper>

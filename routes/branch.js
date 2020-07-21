@@ -160,6 +160,7 @@ router.get('/stores', util.isLoggedin, function( req, res, next ) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
     } else {
+      console.log(results);
       var string = JSON.stringify(results);
       var json =  JSON.parse(string);
       res.status(200).json(util.successTrue(json));
@@ -334,16 +335,12 @@ router.post('/storeModifyNightSurcharge', util.isLoggedin, [
 });
 
 // 상점 할증 수정
-router.post('/storeModifySurcharge', util.isLoggedin, [
+router.post('/storeModifyFee', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
-  check('srchrSeCd','할증 구분 코드는(01 ~ 06)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03','04','05','06']),
-  check('srchrApplyYn','할증 적용 여부는 (Y , N)으로 입력해 주세요.').optional().notEmpty().bail().isIn(['Y','N']),
-  check('srchrAmnt','할증 수수료 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric()
+  check('stoSetSeCd','설정 구분 코드는 (01: 지역, 02: 거리)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02'])
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-
-
 
   mysqlConnect('branch', 'validateStore', req.body, function (error, results) {
     if (error) {
@@ -352,18 +349,47 @@ router.post('/storeModifySurcharge', util.isLoggedin, [
     var string = JSON.stringify(results);
     var json =  JSON.parse(string);
     if( json[0].stoId == 1 ) {
-      mysqlConnect('branch', 'storeModifySurcharge', req.body, function (error, results) {
-        if (error) {
-          res.status(500).json(util.successFalse("SQL Error"));
-        } else {
-          var string = JSON.stringify(results);
-          var json =  JSON.parse(string);
-          res.status(200).json(util.successTrue(json));
+      if( req.body.stoSetSeCd == '01'){
+        var stoSetData = req.body.stoSetData;
+        for( var i = 0; i < stoSetData.length; i++){
+          var areaData = stoSetData[i];
+          if( areaData.setSeqNo == '0') {
+            mysqlConnect('branch', 'storeModifyFeeAreaInst', areaData, function (error, results) {
+              if (error) {
+                res.status(500).json(util.successFalse("SQL Error"));
+              }
+            });
+          } else {
+            mysqlConnect('branch', 'storeModifyFeeAreaUpdt', areaData, function (error, results) {
+              if (error) {
+                res.status(500).json(util.successFalse("SQL Error"));
+              }
+            });
+          }
         }
-      });
-    } else {
-      res.status(401).json(util.successFalse("등록 되지 않은 상점 입니다."));
+      } else if( req.body.stoSetSeCd == '02'){
+        var stoSetData = req.body.stoSetData;
+        for( var i = 0; i < stoSetData.length; i++){
+          var distanceData = stoSetData[i];
+          if( distanceData.setSeqNo == '0') {
+            mysqlConnect('branch', 'storeModifyFeeDdistanceInst', distanceData, function (error, results) {
+              if (error) {
+                res.status(500).json(util.successFalse("SQL Error"));
+              }
+            });
+          } else {
+            mysqlConnect('branch', 'storeModifyFeeDistanceUpdt', distanceData, function (error, results) {
+              if (error) {
+                res.status(500).json(util.successFalse("SQL Error"));
+              }
+            });
+          }
+        }
+      }
     }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
   });
 });
 
