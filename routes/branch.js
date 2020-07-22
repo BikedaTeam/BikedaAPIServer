@@ -36,7 +36,12 @@ router.post('/login', [
     }
   });
 });
-
+//테스트
+router.get('/test', function ( req, res, next) {
+  var data = {}
+  data.test = 'test';
+  res.status(200).json(util.successTrue(data));
+});
 // 배달 조회(  )
 // router.get('/realTimeDelivery', util.isLoggedin, function( req, res, next ) {
 router.get('/realTimeDelivery', function( req, res, next ) {
@@ -160,7 +165,6 @@ router.get('/stores', util.isLoggedin, function( req, res, next ) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
     } else {
-      console.log(results);
       var string = JSON.stringify(results);
       var json =  JSON.parse(string);
       res.status(200).json(util.successTrue(json));
@@ -353,37 +357,35 @@ router.post('/storeModifyFee', util.isLoggedin, [
         var stoSetData = req.body.stoSetData;
         for( var i = 0; i < stoSetData.length; i++){
           var areaData = stoSetData[i];
-          if( areaData.setSeqNo == '0') {
-            mysqlConnect('branch', 'storeModifyFeeAreaInst', areaData, function (error, results) {
-              if (error) {
-                res.status(500).json(util.successFalse("SQL Error"));
-              }
-            });
-          } else {
-            mysqlConnect('branch', 'storeModifyFeeAreaUpdt', areaData, function (error, results) {
+          if( i == 0 ) {
+            mysqlConnect('branch', 'storeModifyFeeAreaDelt', distanceData, function (error, results) {
               if (error) {
                 res.status(500).json(util.successFalse("SQL Error"));
               }
             });
           }
+          mysqlConnect('branch', 'storeModifyFeeAreaInst', areaData, function (error, results) {
+            if (error) {
+              res.status(500).json(util.successFalse("SQL Error"));
+            }
+          });
         }
       } else if( req.body.stoSetSeCd == '02'){
         var stoSetData = req.body.stoSetData;
         for( var i = 0; i < stoSetData.length; i++){
           var distanceData = stoSetData[i];
-          if( distanceData.setSeqNo == '0') {
-            mysqlConnect('branch', 'storeModifyFeeDdistanceInst', distanceData, function (error, results) {
-              if (error) {
-                res.status(500).json(util.successFalse("SQL Error"));
-              }
-            });
-          } else {
-            mysqlConnect('branch', 'storeModifyFeeDistanceUpdt', distanceData, function (error, results) {
+          if( i == 0 ) {
+            mysqlConnect('branch', 'storeModifyFeeDistanceDelt', distanceData, function (error, results) {
               if (error) {
                 res.status(500).json(util.successFalse("SQL Error"));
               }
             });
           }
+          mysqlConnect('branch', 'storeModifyFeeDdistanceInst', distanceData, function (error, results) {
+            if (error) {
+              res.status(500).json(util.successFalse("SQL Error"));
+            }
+          });
         }
       }
     }

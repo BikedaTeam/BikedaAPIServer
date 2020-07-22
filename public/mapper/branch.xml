@@ -101,10 +101,10 @@
             COUNT(*) AS dlvryCnt
       FROM  tb_deliveries AS dlvr
      WHERE  1=1
-    <if test="stoBrcofcId != null and !stoBrcofcId.equal('')">
+    <if test="stoBrcofcId != null and stoBrcofcId !=''">
        AND  dlvr.stoBrcofcId = #{stoBrcofcId}
     </if>
-    <if test="riderBrcofcId != null and !riderBrcofcId.equal('')">
+    <if test="riderBrcofcId != null and riderBrcofcId !='')">
        AND  dlvr.riderBrcofcId = #{riderBrcofcId}
     </if>
        AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
@@ -211,7 +211,7 @@
       			store.stoStateCd
       FROM	tb_stores AS store
      WHERE	store.brcofcId = #{brcofcId}
-    <if test="stoMtlty != null and !stoMtlty.equal('')">
+    <if test="stoMtlty != null and stoMtlty != ''">
        AND  store.stoMtlty LIKE CONCAT('%', #{stoMtlty} ,'%')
     </if>
   </select>
@@ -381,19 +381,12 @@
             #{setAmnt}
             )
   </insert>
-  <!-- 상점 지역 설정 변경 -->
-  <update id="storeModifyFeeAreaUpdt">
-    UPDATE  tb_store_area_settings
-    <set>
-            setSdCd = #{setSdCd},
-            setSggCd = #{setSggCd},
-            setEmdCd = #{setEmdCd},
-            setRiCd = #{setRiCd},
-            setAmnt = #{setAmnt}
-    </set>
+  <!-- 상점 지역 설정 삭제 -->
+  <delete id="storeModifyFeeAreaDelt">
+    DELETE
+      FROM  tb_store_area_settings
      WHERE  stoId = #{stoId}
-       AND  setSeqNo = #{setSeqNo}
-  </update>
+  </delete>
   <!-- 상점 구간 설정 추가 -->
   <insert id="storeModifyFeeDdistanceInst">
     INSERT
@@ -412,14 +405,9 @@
             )
   </insert>
   <!-- 상정 구간 설정 변경 -->
-  <update id="storeModifyFeeDistanceUpdt">
-    UPDATE  tb_store_distance_settings
-    <set>
-            setStdDstnc = #{setStdDstnc},
-            setEndDstnc = #{setEndDstnc},
-            setAmnt = #{setAmnt}
-    </set>
+  <delete id="storeModifyFeeDistanceDelt">
+    DELETE
+      FROM  tb_store_distance_settings
      WHERE  stoId = #{stoId}
-       AND  setSeqNo = #{setSeqNo}
-  </update>
+  </delete>
 </mapper>
