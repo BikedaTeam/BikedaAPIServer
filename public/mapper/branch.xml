@@ -131,6 +131,8 @@
        AND	rider.brcofcId = #{brcofcId}
        AND	rider.riderLoginYn = 'Y'
        AND	rider.riderStateCd = '01'
+     ORDER
+        BY  rider.riderId
   </select>
   <!-- 주문 번호 검증 -->
   <select id="validateDelivery">
@@ -166,6 +168,8 @@
       			tb_rider_locations AS location
      WHERE	rider.riderId = location.riderId
        AND  rider.brcofcId = #{brcofcId}
+     ORDER
+        BY  rider.riderId
   </select>
   <!-- 실시간 라이더 배달 목록 -->
   <select id="realTimeRiderDelivery">
@@ -214,6 +218,8 @@
     <if test="stoMtlty != null and stoMtlty != ''">
        AND  store.stoMtlty LIKE CONCAT('%', #{stoMtlty} ,'%')
     </if>
+     ORDER
+        BY  store.stoId
   </select>
   <!-- 상점 할증 -->
   <select id="storeSurcharge">
@@ -224,6 +230,8 @@
       			surcharge.srchrApplyYn
       FROM	tb_store_surcharges AS surcharge
      WHERE	surcharge.stoId = #{stoId}
+     ORDER
+        BY  surcharge.srchrSeCd
   </select>
   <!-- 상점 지역 설정 -->
   <select id="storeAreaSetting">
@@ -261,7 +269,9 @@
       			) AS setRiNm,
       			areas.setAmnt
       FROM	tb_store_area_settings AS areas
-     WHERE	areas.stoId = #{stoId}
+     WHERE	areas.stoId = #{stoId
+     ORDER
+        BY  areas.setSeqNo
   </select>
   <!-- 상점 지역 설정 좌표-->
   <select id="storeAreaSettingCoordinate">
@@ -290,6 +300,8 @@
       			distances.setAmnt
       FROM	tb_store_distance_settings AS distances
      WHERE	distances.stoId = #{stoId}
+     ORDER
+        BY  distances.setStdDstnc
   </select>
   <!-- 상점 특별 설정 -->
   <select id="storeSpecialSetting">
@@ -299,6 +311,8 @@
       			special.setAmnt
       FROM	tb_store_special_settings AS special
      WHERE	special.stoId = #{stoId}
+     ORDER
+        BY  special.setSeqNo
   </select>
   <!-- 상점 특별 설정 좌표 -->
   <select id="storeSpecialSettingLocation">
@@ -310,6 +324,8 @@
       FROM	tb_store_special_locations AS specialLocation
      WHERE	specialLocation.setSeqNo = #{setSeqNo}
        AND	specialLocation.stoId = #{stoId}
+     ORDER
+        BY  specialLocation.lctnSeqNo, specialLocation.setSeqNo
   </select>
   <!-- 상점 검증 -->
   <select id="validateStore">
