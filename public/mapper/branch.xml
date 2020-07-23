@@ -269,7 +269,7 @@
       			) AS setRiNm,
       			areas.setAmnt
       FROM	tb_store_area_settings AS areas
-     WHERE	areas.stoId = #{stoId
+     WHERE	areas.stoId = #{stoId}
      ORDER
         BY  areas.setSeqNo
   </select>
