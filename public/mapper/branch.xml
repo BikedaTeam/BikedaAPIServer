@@ -376,6 +376,16 @@
      WHERE  stoId = #{stoId}
        AND  srchrSeCd = #{srchrSeCd}
   </update>
+
+  <!-- 상점 수정 -->
+  <update id="storeModifyFee">
+    UPDATE  tb_stores
+    <set>
+            stoSetSeCd = #{stoSetSeCd}
+    </set>
+     WHERE  stoId = #{stoId}
+  </update>
+
   <!-- 상점 지역 설정 추가 -->
   <insert id="storeModifyFeeAreaInst">
     INSERT
@@ -393,15 +403,39 @@
             #{setSdCd},
             #{setSggCd},
             #{setEmdCd},
+    <if test="setRiCd != null and setRiCd != ''">
             #{setRiCd},
+    </if>
+    <if test="setRiCd == null or setRiCd == ''">
+            '00',
+    </if>
+
             #{setAmnt}
             )
   </insert>
+  <!-- 상점 지역 설정 수정 -->
+  <update id="storeModifyFeeAreaUpdt">
+    UPDATE  tb_store_area_settings
+    <set>
+            setSdCd = #{setSdCd},
+            setSggCd = #{setSggCd},
+            setEmdCd = #{setEmdCd},
+    <if test="setRiCd != null and setRiCd != ''">
+            setRiCd = #{setRiCd},
+    </if>
+    <if test="setRiCd == null or setRiCd == ''">
+            setRiCd = '00',
+    </if>
+    </set>
+     WHERE  stoId = #{stoId}
+       AND  setSeqNo = #{setSeqNo}
+  </update>
   <!-- 상점 지역 설정 삭제 -->
   <delete id="storeModifyFeeAreaDelt">
     DELETE
       FROM  tb_store_area_settings
      WHERE  stoId = #{stoId}
+       AND  setSeqNo = #{setSeqNo}
   </delete>
   <!-- 상점 구간 설정 추가 -->
   <insert id="storeModifyFeeDdistanceInst">
@@ -421,9 +455,68 @@
             )
   </insert>
   <!-- 상정 구간 설정 변경 -->
+  <update id="storeModifyFeeDistanceUpdt">
+    UPDATE  tb_store_distance_settings
+    <set>
+            setStdDstnc = #{setStdDstnc},
+            setEndDstnc = #{setEndDstnc},
+            setAmnt = #{setAmnt}
+    </set>
+     WHERE  stoId = #{stoId}
+       AND  setSeqNo = #{setSeqNo}
+  </update>
+  <!-- 상점 구간 설정 삭제 -->
   <delete id="storeModifyFeeDistanceDelt">
     DELETE
       FROM  tb_store_distance_settings
      WHERE  stoId = #{stoId}
+       AND  setSeqNo = #{setSeqNo}
+  </delete>
+
+  <insert id="storeModifyFeeSpecialInst">
+    INSERT
+      INTO  tb_store_special_settings
+            (
+            stoId,
+            setNm,
+            setAmnt
+            )
+    VALUES  (
+            #{stoId},
+            #{setNm},
+            #{setAmnt}
+            )
+  </insert>
+
+  <update id="storeModifyFeeSpecialUpdt">
+    UPDATE  tb_store_special_settings
+    <set>
+            setNm = #{setNm},
+            setAmnt = #{setAmnt},
+    </set>
+     WHERE  stoId = #{stoId}
+       AND  setSeqNo = #{setSeqNo}
+  </update>
+
+  <insert id="storeModifyFeeSpecialLocationInst">
+    INSERT
+      INTO  tb_store_special_locations
+            (
+            setSeqNo,
+            stoId,
+            lctnLa,
+            lctnLo
+            )
+    VALUES  (
+            #{setSeqNo},
+            #{stoId},
+            #{lctnLa},
+            #{lctnLo}
+            )
+  </insert>
+  <delete id="storeModifyFeeSpecialLocationDelt">
+    DELETE
+      FROM  tb_store_special_locations
+     WHERE  setSeqNo = #{setSeqNo}
   </delete>
 </mapper>

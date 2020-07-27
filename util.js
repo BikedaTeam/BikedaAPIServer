@@ -4,10 +4,11 @@ var Op = sequelize.Op;
 var util = {};
 
 util.successTrue = function(data){
+
   return {
     success : true,
     message : null,
-    data : data
+    data : data || ''
   };
 };
 

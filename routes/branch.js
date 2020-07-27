@@ -338,7 +338,7 @@ router.post('/storeModifyNightSurcharge', util.isLoggedin, [
   });
 });
 
-// 상점 할증 수정
+// 상점 요금 수정
 router.post('/storeModifyFee', util.isLoggedin, [
   check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
   check('stoSetSeCd','설정 구분 코드는 (01: 지역, 02: 거리)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02'])
@@ -353,37 +353,176 @@ router.post('/storeModifyFee', util.isLoggedin, [
     var string = JSON.stringify(results);
     var json =  JSON.parse(string);
     if( json[0].stoId == 1 ) {
+      mysqlConnect('branch', 'storeModifyFee', req.body, function (error, results) {
+        if (error) {
+          res.status(500).json(util.successFalse("SQL Error"));
+        }
+      });
+
       if( req.body.stoSetSeCd == '01'){
         var stoSetData = req.body.stoSetData;
         for( var i = 0; i < stoSetData.length; i++){
           var areaData = stoSetData[i];
-          if( i == 0 ) {
-            mysqlConnect('branch', 'storeModifyFeeAreaDelt', distanceData, function (error, results) {
+          if( areaData.setSeqNo == '0' ) {
+            mysqlConnect('branch', 'storeModifyFeeAreaInst', areaData, function (error, results) {
               if (error) {
+                console.log(error);
+                res.status(500).json(util.successFalse("SQL Error"));
+              }
+            });
+          } else {
+            mysqlConnect('branch', 'storeModifyFeeAreaUpdt', areaData, function (error, results) {
+              if (error) {
+                console.log(error);
                 res.status(500).json(util.successFalse("SQL Error"));
               }
             });
           }
-          mysqlConnect('branch', 'storeModifyFeeAreaInst', areaData, function (error, results) {
-            if (error) {
-              res.status(500).json(util.successFalse("SQL Error"));
-            }
-          });
         }
       } else if( req.body.stoSetSeCd == '02'){
         var stoSetData = req.body.stoSetData;
         for( var i = 0; i < stoSetData.length; i++){
           var distanceData = stoSetData[i];
-          if( i == 0 ) {
-            mysqlConnect('branch', 'storeModifyFeeDistanceDelt', distanceData, function (error, results) {
+          if( distanceData.setSeqNo == '0' ) {
+            mysqlConnect('branch', 'storeModifyFeeDdistanceInst', distanceData, function (error, results) {
+              if (error) {
+                res.status(500).json(util.successFalse("SQL Error"));
+              }
+            });
+          } else {
+            mysqlConnect('branch', 'storeModifyFeeDistanceUpdt', distanceData, function (error, results) {
               if (error) {
                 res.status(500).json(util.successFalse("SQL Error"));
               }
             });
           }
-          mysqlConnect('branch', 'storeModifyFeeDdistanceInst', distanceData, function (error, results) {
+        }
+      }
+      res.status(200).json(util.successTrue(null));
+    } else {
+      res.status(401).json(util.successFalse("등록 되지 않은 상점 입니다."));
+    }
+  });
+});
+
+// 상점 지역 설정 삭제
+router.post('/storeModifyFeeAreaDelt', util.isLoggedin, [
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('setSeqNo','설정 일련 번호는 필수 입력 입니다').exists().bail().notEmpty().bail().isNumeric()
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  console.log(req.body);
+  mysqlConnect('branch', 'validateStore', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    if( json[0].stoId == 1 ) {
+      mysqlConnect('branch', 'storeModifyFeeAreaDelt', req.body, function (error, results) {
+        if (error) {
+          res.status(500).json(util.successFalse("SQL Error"));
+        }
+      });
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
+  });
+});
+
+// 상점 지역 설정 삭제
+router.post('/storeModifyFeeDistanceDelt', util.isLoggedin, [
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('setSeqNo','설정 일련 번호는 필수 입력 입니다').exists().bail().notEmpty().bail().isNumeric()
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  mysqlConnect('branch', 'validateStore', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    if( json[0].stoId == 1 ) {
+      mysqlConnect('branch', 'storeModifyFeeDistanceDelt', req.body, function (error, results) {
+        if (error) {
+          res.status(500).json(util.successFalse("SQL Error"));
+        }
+      });
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    res.status(200).json(util.successTrue(json));
+  });
+});
+
+// 상점 특수 요금 수정
+router.post('/storeModifySpecial', util.isLoggedin, [
+  check('stoId','상점 ID는 필수 입력 입니다. Sxxxx 형식으로 입력해 주세요.(ex : S0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+
+  mysqlConnect('branch', 'validateStore', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    if( json[0].stoId == 1 ) {
+      var stoSetDatas = req.body.stoSetData;
+      for( var i = 0; i < stoSetDatas.length; i++){
+        var stoSetData = stoSetDatas[i];
+        if( stoSetData.setSeqNo == '0' ){
+          mysqlConnect('branch', 'storeModifyFeeSpecialInst', stoSetData, function (error, results) {
             if (error) {
               res.status(500).json(util.successFalse("SQL Error"));
+            }
+
+            if( stoSetData.points ) {
+              for( var j = 0 ; j < stoSetData.points.length ; j++ ) {
+                var location = {};
+                location.stoId = stoSetData.stoId;
+                location.setSeqNo = results.insertId;
+                location.lctnLa = stoSetData.points[j].y;
+                location.lctnLo = stoSetData.points[j].x;
+                console.log(location);
+                mysqlConnect('branch', 'storeModifyFeeSpecialLocationInst', location, function (error, results) {
+                  if (error) {
+                    res.status(500).json(util.successFalse("SQL Error"));
+                  }
+                });
+              }
+            }
+          });
+        } else {
+          mysqlConnect('branch', 'storeModifyFeeSpecialUpdt', stoSetData, function (error, results) {
+            if (error) {
+              res.status(500).json(util.successFalse("SQL Error"));
+            }
+            if( stoSetData.points ) {
+              mysqlConnect('branch', 'storeModifyFeeSpecialLocationDelt', stoSetData, function (error, results) {
+                if (error) {
+                  res.status(500).json(util.successFalse("SQL Error"));
+                }
+              });
+              for( var j = 0 ; j < stoSetData.points.length ; j++ ) {
+                var location = {};
+                location.stoId = stoSetData.stoId;
+                location.setSeqNo = stoSetData.setSeqNo;
+                location.lctnLa = stoSetData.points[j].y;
+                location.lctnLo = stoSetData.points[j].x;
+                console.log(location);
+                mysqlConnect('branch', 'storeModifyFeeSpecialLocationInst', location, function (error, results) {
+                  if (error) {
+                    res.status(500).json(util.successFalse("SQL Error"));
+                  }
+                });
+              }
             }
           });
         }
@@ -394,5 +533,6 @@ router.post('/storeModifyFee', util.isLoggedin, [
     res.status(200).json(util.successTrue(json));
   });
 });
+
 
 module.exports = router;
