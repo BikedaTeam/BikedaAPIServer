@@ -250,6 +250,35 @@ router.get('/storeSpecialSettingLocation', util.isLoggedin, function( req, res, 
     }
   });
 });
+// 상점 등록
+router.post('/storeRegister', util.isLoggedin, [
+  check('brcofcId','지점 ID는 필수 입력 입니다. Bxxxx 형식으로 입력해 주세요.(ex : B0001)').exists().bail().notEmpty().bail().isLength({ min: 5, max: 5 }),
+  check('stoBsnsRgnmb','사업자 번호는 (-)를 제외한 10자리 숫자를 입력해 주세요.').exists().bail().notEmpty().bail().isNumeric().bail().isLength({ min: 10, max: 10 }),
+  check('stoMtlty','상호가 입력 되지 않았습니다.').exists().bail().notEmpty(),
+  check('stoBizSeCd','사업자 구분 코드는 (01: 개인 사업자, 02: 법인 사업자)로 입력해 주세요.').exists().bail().notEmpty().bail().isIn(['01','02']),
+  check('stoRprsntvNm','대표자명이 입력 되지 않았습니다.').exists().bail().notEmpty(),
+  check('stoBrdYmd','대표자 생년월일은 YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231)').if(check('stoBizSeCd').isIn(['01'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('stoCrprtRgnmb','법인 등록 번호는 (-)를 제외한 13자리 숫자를 입력해 주세요.').if(check('stoBizSeCd').isIn(['02'])).exists().bail().notEmpty().bail().isNumeric().bail().isLength({min:13, max:13}),
+  check('stoOpnngYmd','개업 년월일은 YYYYMMDD 형식으로 입력해 주세요.(ex : 19001231).').exists().bail().notEmpty().isNumeric().bail().isLength({min:8, max:8}).bail().matches(/^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/),
+  check('stoBsnsPlaceAdres','사업장 주소가 입력 되지 않았습니다.').exists().bail().notEmpty(),
+  check('stoBizcnd','업태가 입력 되지 않았습니다.').exists().bail().notEmpty(),
+  check('stoInduty','업종이 입력 되지 않았습니다.').exists().bail().notEmpty(),
+  check('stoTelno','연락처는 (-)를 제외한 숫자로 입력해 주세요.').exists().bail().notEmpty().isNumeric(),
+  check('stoLa','위도는 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/),
+  check('stoLo','경도는 소수점 20자리 까지 입력 가능 합니다.').exists().bail().notEmpty().bail().isNumeric().bail().matches(/^(\d{1,3})([.]\d{0,20}?)?$/)
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+  mysqlConnect('branch', 'storeRegister', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
+    }
+  });
+});
 
 // 상점 수정
 router.post('/storeModify', util.isLoggedin, [

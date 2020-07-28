@@ -327,6 +327,35 @@
      ORDER
         BY  specialLocation.lctnSeqNo, specialLocation.setSeqNo
   </select>
+
+  <insert id="storeRegister">
+    INSERT
+      INTO  tb_stores
+            (
+            stoId,
+            brcofcId,
+            stoBsnsRgnmb,
+            stoPassword,
+            stoMtlty,
+            stoBizSeCd,
+            stoRprsntvNm,
+            stoBrdYmd,
+            stoCrprtRgnmb,
+            stoOpnngYmd,
+            stoBsnsPlaceAdres,
+            stoHdofcAdres,
+            stoBizcnd,
+            stoInduty,
+            stoTelno,
+            stoSetSeCd,
+            stoStateCd,
+            stoLa,
+            stoLo
+            )
+    VALUES  (
+            
+            )
+  </insert>
   <!-- 상점 검증 -->
   <select id="validateStore">
     SELECT  IFNUlL( COUNT(*), 0 ) AS stoId
