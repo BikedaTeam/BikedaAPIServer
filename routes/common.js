@@ -73,4 +73,18 @@ router.get('/ri', util.isLoggedin, [
     }
   });
 });
+
+router.get('/bank', util.isLoggedin, function( req, res, next ){
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+  mysqlConnect('common', 'bank', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
+    }
+  });
+});
 module.exports = router;

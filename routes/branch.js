@@ -269,13 +269,35 @@ router.post('/storeRegister', util.isLoggedin, [
 ], function( req, res, next ) {
   var errors = validationResult(req);
   if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
-  mysqlConnect('branch', 'storeRegister', req.body, function (error, results) {
+  mysqlConnect('branch', 'validateStore', req.body, function (error, results) {
     if (error) {
       res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    if( json[0].stoId == 0 ) {
+      mysqlConnect('branch', 'storeId', req.body, function (error, results) {
+        if (error) {
+          res.status(500).json(util.successFalse("SQL Error"));
+        } else {
+          var string = JSON.stringify(results);
+          var json =  JSON.parse(string);
+          if( json[0].stoId ) {
+            req.body.stoId = json[0].stoId;
+            mysqlConnect('branch', 'storeRegister', req.body, function (error, results) {
+              if (error) {
+                res.status(500).json(util.successFalse("SQL Error"));
+              } else {
+                var string = JSON.stringify(results);
+                var json =  JSON.parse(string);
+                res.status(200).json(util.successTrue(json));
+              }
+            });
+          }
+        }
+      });
     } else {
-      var string = JSON.stringify(results);
-      var json =  JSON.parse(string);
-      res.status(200).json(util.successTrue(json));
+      res.status(401).json(util.successFalse("이미 등록된 사업자 번호 입니다."));
     }
   });
 });
@@ -563,5 +585,16 @@ router.post('/storeModifySpecial', util.isLoggedin, [
   });
 });
 
-
+// 라이더 조회
+router.get('/riders', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'riders', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
+    }
+  });
+});
 module.exports = router;

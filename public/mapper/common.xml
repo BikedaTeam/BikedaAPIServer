@@ -40,4 +40,15 @@
        AND  ri.sggCd = #{sggCd}
        AND  ri.emdCd = #{emdCd}
   </select>
+
+  <!-- 은랭   -->
+  <select id="bank">
+    SELECT	bank.bankCd,
+      			bank.bankNm
+      FROM	tb_banks AS bank
+     WHERE	1 = 1
+    <if test="bankCd != null and bankCd != ''">
+       AND  bank.bankCd = #{bankCd}
+    </if>
+  </select>
 </mapper>

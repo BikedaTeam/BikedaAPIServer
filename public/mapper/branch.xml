@@ -328,6 +328,10 @@
         BY  specialLocation.lctnSeqNo, specialLocation.setSeqNo
   </select>
 
+  <select id="storeId">
+    SELECT  CAST( CONCAT('S', LPAD( CONCAT( IFNULL( MAX( CAST( SUBSTR( stoId, 2 ) AS UNSIGNED ) ) , 0 ) + 1 ), 4, '0' ) ) AS CHAR ) AS stoId
+      FROM  tb_stores
+  </select>
   <insert id="storeRegister">
     INSERT
       INTO  tb_stores
@@ -339,11 +343,15 @@
             stoMtlty,
             stoBizSeCd,
             stoRprsntvNm,
+    <if test="stoBizSeCd == '01'">
             stoBrdYmd,
+    </if>
+    <if test="stoBizSeCd == '02'">
             stoCrprtRgnmb,
+            stoHdofcAdres,
+    </if>
             stoOpnngYmd,
             stoBsnsPlaceAdres,
-            stoHdofcAdres,
             stoBizcnd,
             stoInduty,
             stoTelno,
@@ -353,14 +361,43 @@
             stoLo
             )
     VALUES  (
-            
+            #{stoId},
+            #{brcofcId},
+            #{stoBsnsRgnmb},
+            #{stoPassword},
+            #{stoMtlty},
+            #{stoBizSeCd},
+            #{stoRprsntvNm},
+    <if test="stoBizSeCd == '01'">
+            #{stoBrdYmd},
+    </if>
+    <if test="stoBizSeCd == '02'">
+            #{stoCrprtRgnmb},
+            #{stoHdofcAdres},
+    </if>
+            #{stoOpnngYmd},
+            #{stoBsnsPlaceAdres},
+            #{stoBizcnd},
+            #{stoInduty},
+            #{stoTelno},
+            '01',
+            '01',
+            #{stoLa},
+            #{stoLo}
             )
   </insert>
   <!-- 상점 검증 -->
   <select id="validateStore">
     SELECT  IFNUlL( COUNT(*), 0 ) AS stoId
       FROM  tb_stores
-     WHERE  stoId = #{stoId}
+     WHERE  1 = 1
+    <if test="stoId != null and stoId != ''">
+       AND  stoId = #{stoId}
+    </if>
+    <if test="stoBsnsRgnmb != null and stoBsnsRgnmb != ''">
+       AND  stoBsnsRgnmb = #{stoBsnsRgnmb}
+    </if>
+
   </select>
   <!-- 상점 수정 -->
   <update id="storeModify">
@@ -548,4 +585,31 @@
       FROM  tb_store_special_locations
      WHERE  setSeqNo = #{setSeqNo}
   </delete>
+
+  <!-- 라이더 목록 -->
+  <select id="riders">
+    SELECT	rider.riderId,
+      			rider.brcofcId,
+      			rider.riderCelno,
+      			rider.riderNm,
+      			rider.riderWthdrBankCd,
+            IFNULL((
+            SELECT  bank.bankNm
+              FROM  tb_banks AS bank
+             WHERE  bank.bankCd = rider.riderWthdrBankCd
+            ),'') AS riderWthdrBankNm,
+      			rider.riderWthdrAcnt,
+      			rider.riderLoginYn,
+      			rider.riderMinWthdrAmnt,
+      			rider.riderCallLimit,
+      			rider.riderCallDelayTime,
+      			rider.riderStateCd
+      FROM	tb_riders AS rider
+     WHERE	rider.brcofcId = #{brcofcId}
+    <if test="riderNm != null and riderNm != ''">
+       AND  rider.riderNm LIKE CONCAT('%', #{riderNm} ,'%')
+    </if>
+     ORDER
+        BY  rider.riderId
+  </select>
 </mapper>
