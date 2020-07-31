@@ -612,4 +612,34 @@
      ORDER
         BY  rider.riderId
   </select>
+
+  <!-- 라이더 검증 -->
+  <select id="validateRider">
+    SELECT  IFNUlL( COUNT(*), 0 ) AS riderId
+      FROM  tb_riders
+     WHERE  1 = 1
+    <if test="riderId != null and riderId != ''">
+       AND  riderId = #{riderId}
+    </if>
+    <if test="riderCelno != null and riderCelno != ''">
+       AND  riderCelno = #{riderCelno}
+    </if>
+
+  </select>
+
+  <!-- 라이더 수정 -->
+  <update id="riderModify">
+    UPDATE  tb_riders
+    <set>
+            riderNm = #{riderNm},
+            riderCelno = #{riderCelno},
+            riderWthdrBankCd = #{riderWthdrBankCd},
+            riderWthdrAcnt = #{riderWthdrAcnt},
+            riderMinWthdrAmnt = #{riderMinWthdrAmnt},
+            riderCallLimit = #{riderCallLimit},
+            riderCallDelayTime = #{riderCallDelayTime},
+            riderStateCd = #{riderStateCd}
+    </set>
+     WHERE  riderId = #{riderId}
+  </update>
 </mapper>

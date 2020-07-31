@@ -597,4 +597,40 @@ router.get('/riders', util.isLoggedin, function( req, res, next ) {
     }
   });
 });
+
+// 바이크다 기사 수정
+router.post('/riderModify', util.isLoggedin, [
+  check('riderId','기사 ID는 필수 입력 입니다. Rxxxxx 형식으로 입력해 주세요.(ex : R00001)').exists().bail().notEmpty().bail().isLength({ min: 6, max: 6 }),
+  check('riderCelno','(-)를 제외한 숫자로 입력해 주세요.').optional().notEmpty().isNumeric(),
+  check('riderNm','기사이 입력 되지 않았습니다.').optional().notEmpty(),
+  check('riderWthdrBankCd','출금 은행 코드는 3자리 숫자로 입력해 주세요.').optional().notEmpty().bail().isLength({ min: 3, max: 3 }),
+  check('riderWthdrAcnt','출금 계좌가 입력 되지 않았습니다.').optional().notEmpty(),
+  check('riderMinWthdrAmnt','최소 출금 금액은 원단위로 입력해 주세요.').optional().exists().bail().notEmpty().bail().isNumeric(),
+  check('riderCallLimit','콜 제한 수가 입력 되지 않았습니다.').optional().notEmpty().bail().isNumeric(),
+  check('riderCallDelayTime','콜 지연 시간은 초단위로 입력해 주세요.').optional().notEmpty().bail().isNumeric(),
+  check('riderStateCd','상태 코드는(01: 정상, 02:해지, 03:휴무)로 입력해 주세요.').optional().notEmpty().bail().isIn(['01','02','03'])
+], function( req, res, next ) {
+  var errors = validationResult(req);
+  if( !errors.isEmpty() ) return res.status(400).json(util.successFalse(errors));
+  mysqlConnect('branch', 'validateRider', req.body, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    }
+    var string = JSON.stringify(results);
+    var json =  JSON.parse(string);
+    if( json[0].riderId == 1 ) {
+      mysqlConnect('branch', 'riderModify', req.body, function (error, results) {
+        if (error) {
+          res.status(500).json(util.successFalse("SQL Error"));
+        } else {
+          var string = JSON.stringify(results);
+          var json =  JSON.parse(string);
+          res.status(200).json(util.successTrue(json));
+        }
+      });
+    } else {
+      res.status(401).json(util.successFalse("등록 되지 않은 기사 입니다."));
+    }
+  });
+});
 module.exports = router;
