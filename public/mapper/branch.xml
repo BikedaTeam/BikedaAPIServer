@@ -627,14 +627,59 @@
 
   </select>
 
+  <select id="riderId">
+    SELECT  CAST( CONCAT('R', LPAD( CONCAT( IFNULL( MAX( CAST( SUBSTR( riderId, 2 ) AS UNSIGNED ) ) , 0 ) + 1 ), 5, '0' ) ) AS CHAR ) AS riderId
+      FROM  tb_riders
+  </select>
+
+  <insert id="riderRegister">
+    INSERT
+      INTO  tb_riders
+            (
+            riderId,
+            brcofcId,
+            riderCelno,
+            riderNm,
+    <if test="riderWthdrBankCd != null and riderWthdrBankCd != ''">
+            riderWthdrBankCd,
+    </if>
+    <if test="riderWthdrAcnt != null and riderWthdrAcnt != ''">
+            riderWthdrAcnt,
+    </if>
+            riderMinWthdrAmnt,
+            riderCallLimit,
+            riderCallDelayTime,
+            riderStateCd
+            )
+    VALUES  (
+            #{riderId},
+            #{brcofcId},
+            #{riderCelno},
+            #{riderNm},
+    <if test="riderWthdrBankCd != null and riderWthdrBankCd != ''">
+            #{riderWthdrBankCd},
+    </if>
+    <if test="riderWthdrAcnt != null and riderWthdrAcnt != ''">
+            #{riderWthdrAcnt},
+    </if>
+            #{riderMinWthdrAmnt},
+            #{riderCallLimit},
+            #{riderCallDelayTime},
+            '01'
+            )
+  </insert>
   <!-- 라이더 수정 -->
   <update id="riderModify">
     UPDATE  tb_riders
     <set>
             riderNm = #{riderNm},
             riderCelno = #{riderCelno},
+    <if test="riderWthdrBankCd != null and riderWthdrBankCd != ''">
             riderWthdrBankCd = #{riderWthdrBankCd},
+    </if>
+    <if test="riderWthdrAcnt != null and riderWthdrAcnt != ''">
             riderWthdrAcnt = #{riderWthdrAcnt},
+    </if>
             riderMinWthdrAmnt = #{riderMinWthdrAmnt},
             riderCallLimit = #{riderCallLimit},
             riderCallDelayTime = #{riderCallDelayTime},
