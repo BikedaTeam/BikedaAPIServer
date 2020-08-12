@@ -672,4 +672,29 @@ router.post('/riderModify', util.isLoggedin, [
     }
   });
 });
+// 지점 포인트 총액 조회
+router.get('/branchTotPoint', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'branchTotPoint', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
+    }
+  });
+});
+
+// 지점 포인트 조회
+router.get('/branchPoint', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'branchPoint', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
+    }
+  });
+});
 module.exports = router;
