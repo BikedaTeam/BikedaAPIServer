@@ -690,10 +690,10 @@
 
   <!-- 지점 포인트 총액 조회 -->
   <select id="branchTotPoint">
-    SELECT  ( upPrint - downPrint ) AS totPoint
+    SELECT  ( upPoint - downPoint ) AS totPoint
       FROM  (
-            SELECT	SUM(CASE when pointSeCd = '01' THEN pointAmnt ELSE 0 END ) upPrint,
-              			SUM(CASE when pointSeCd = '02' THEN pointAmnt ELSE 0 END ) downPrint
+            SELECT	IFNULL( SUM(CASE when pointSeCd = '01' THEN pointAmnt ELSE 0 END ),0) upPoint,
+              			IFNULL( SUM(CASE when pointSeCd = '02' THEN pointAmnt ELSE 0 END ),0) downPoint
               FROM	tb_branch_points
              WHERE	brcofcId = #{brcofcId}
             ) as tot_point
@@ -717,13 +717,12 @@
 
   <!-- 기사 포인트 총액 조회 -->
   <select id="riderTotPoint">
-    SELECT  ( upPrint - downPrint ) AS totPoint
+    SELECT  ( upPoint - downPoint ) AS totPoint
       FROM  (
-            SELECT	SUM(CASE when pointSeCd = '01' THEN pointAmnt ELSE 0 END ) upPrint,
-              			SUM(CASE when pointSeCd = '02' THEN pointAmnt ELSE 0 END ) downPrint
+            SELECT	IFNULL( SUM(CASE when pointSeCd = '01' THEN pointAmnt ELSE 0 END ),0) upPoint,
+              			IFNULL( SUM(CASE when pointSeCd = '02' THEN pointAmnt ELSE 0 END ),0) downPoint
               FROM	tb_rider_points
-             WHERE	brcofcId = #{brcofcId}
-               AND  riderId = #{riderId}
+             WHERE	riderId = #{riderId}
             ) as tot_point
   </select>
   <!-- 기사 포인트 일자별 조회 -->
@@ -732,9 +731,8 @@
             pointAmnt,
             date_format(pointRegDt, "%Y%m%d%H%i%s") pointRegDt,
             pointNote
-      FROM  tb_branch_points
-     WHERE  brcofcId = #{brcofcId}
-       AND  riderId = #{riderId}
+      FROM  tb_rider_points
+     WHERE  riderId = #{riderId}
        AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ >= ]]> #{stdDate}
        AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ <= ]]> #{endDate}
     <if test="pointSeCd != '00'">

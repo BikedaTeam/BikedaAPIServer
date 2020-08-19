@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var util = require('../util');
 var jwt = require('jsonwebtoken');
-var models = require('../models');
+var mysqlConnect = require('../mysqlConnect');
 var { check, validationResult } = require('express-validator');
 
 // 바이크다 라이더 API Document

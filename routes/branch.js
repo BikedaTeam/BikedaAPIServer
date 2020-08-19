@@ -715,6 +715,7 @@ router.get('/riderTotPoint', util.isLoggedin, function( req, res, next ) {
 router.get('/riderPoint', util.isLoggedin, function( req, res, next ) {
   mysqlConnect('branch', 'riderPoint', req.query, function (error, results) {
     if (error) {
+      console.log(error);
       res.status(500).json(util.successFalse("SQL Error"));
     } else {
       var string = JSON.stringify(results);
