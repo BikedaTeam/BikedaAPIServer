@@ -204,8 +204,15 @@
       			store.stoBizcnd,
       			store.stoInduty,
       			store.stoTelno,
+            store.stoVrtlBankCd,
+            IFNULL((
+            SELECT  bank.bankNm
+              FROM  tb_banks AS bank
+             WHERE  bank.bankCd = store.stoVrtlBankCd
+            ),'') AS stoVrtlBankNm,
       			store.stoVrtlAcnt,
       			store.stoSetSeCd,
+            store.stoVatYn,
       			store.stoNightSrchrApplyYn,
       			store.stoNightSrchrStdTm,
       			store.stoNightSrchrEndTm,
@@ -343,6 +350,8 @@
             stoMtlty,
             stoBizSeCd,
             stoRprsntvNm,
+            stoVrtlBankCd,
+            stoVrtlAcnt,
     <if test="stoBizSeCd == '01'">
             stoBrdYmd,
     </if>
@@ -357,6 +366,7 @@
             stoTelno,
             stoSetSeCd,
             stoStateCd,
+            stoVatYn,
             stoLa,
             stoLo
             )
@@ -368,6 +378,8 @@
             #{stoMtlty},
             #{stoBizSeCd},
             #{stoRprsntvNm},
+            #{stoVrtlBankCd},
+            #{stoVrtlAcnt},
     <if test="stoBizSeCd == '01'">
             #{stoBrdYmd},
     </if>
@@ -382,6 +394,7 @@
             #{stoTelno},
             '01',
             '01',
+            #{stoVatYn},
             #{stoLa},
             #{stoLo}
             )
@@ -414,8 +427,10 @@
             stoBizcnd = #{stoBizcnd},
             stoInduty = #{stoInduty},
             stoTelno = #{stoTelno},
+            stoVrtlBankCd = #{stoVrtlBankCd},
             stoVrtlAcnt = #{stoVrtlAcnt},
             stoStateCd = #{stoStateCd},
+            stoVatYn = #{stoVatYn},
             stoBizSeCd = #{stoBizSeCd}
     </set>
      WHERE  stoId = #{stoId}
@@ -700,17 +715,14 @@
   </select>
   <!-- 지점 포인트 일자별 조회 -->
   <select id="branchPoint">
-    SELECT  pointSeCd,
-            pointAmnt,
+    SELECT  if( pointSeCd = '01', pointAmnt, 0 ) as pointIncrsAmnt,
+            if( pointSeCd = '02', pointAmnt, 0 ) as pointDecrsAmnt,
             date_format(pointRegDt, "%Y%m%d%H%i%s") pointRegDt,
             pointNote
       FROM  tb_branch_points
      WHERE  brcofcId = #{brcofcId}
        AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ >= ]]> #{stdDate}
        AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ <= ]]> #{endDate}
-    <if test="pointSeCd != '00'">
-       AND  pointSeCd = #{pointSeCd}
-    </if>
      ORDER
         BY  pointRegDt desc
   </select>
@@ -727,17 +739,14 @@
   </select>
   <!-- 기사 포인트 일자별 조회 -->
   <select id="riderPoint">
-    SELECT  pointSeCd,
-            pointAmnt,
+    SELECT  if( pointSeCd = '01', pointAmnt, 0 ) as pointIncrsAmnt,
+            if( pointSeCd = '02', pointAmnt, 0 ) as pointDecrsAmnt,
             date_format(pointRegDt, "%Y%m%d%H%i%s") pointRegDt,
             pointNote
       FROM  tb_rider_points
      WHERE  riderId = #{riderId}
        AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ >= ]]> #{stdDate}
-       AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ <= ]]> #{endDate}
-    <if test="pointSeCd != '00'">
-       AND  pointSeCd = #{pointSeCd}
-    </if>
+       AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ <= ]]> #{endDate}    
      ORDER
         BY  pointRegDt desc
   </select>
