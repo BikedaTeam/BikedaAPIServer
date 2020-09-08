@@ -727,27 +727,32 @@
         BY  pointRegDt desc
   </select>
 
-  <!-- 기사 포인트 총액 조회 -->
-  <select id="riderTotPoint">
-    SELECT  ( upPoint - downPoint ) AS totPoint
-      FROM  (
-            SELECT	IFNULL( SUM(CASE when pointSeCd = '01' THEN pointAmnt ELSE 0 END ),0) upPoint,
-              			IFNULL( SUM(CASE when pointSeCd = '02' THEN pointAmnt ELSE 0 END ),0) downPoint
-              FROM	tb_rider_points
-             WHERE	riderId = #{riderId}
-            ) as tot_point
-  </select>
-  <!-- 기사 포인트 일자별 조회 -->
+
+  <!-- 기사 포인트 조회 -->
   <select id="riderPoint">
-    SELECT  if( pointSeCd = '01', pointAmnt, 0 ) as pointIncrsAmnt,
-            if( pointSeCd = '02', pointAmnt, 0 ) as pointDecrsAmnt,
-            date_format(pointRegDt, "%Y%m%d%H%i%s") pointRegDt,
-            pointNote
-      FROM  tb_rider_points
-     WHERE  riderId = #{riderId}
-       AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ >= ]]> #{stdDate}
-       AND  date_format(pointRegDt, "%Y%m%d") <![CDATA[ <= ]]> #{endDate}    
-     ORDER
-        BY  pointRegDt desc
+    SELECT	rider.riderId,
+      			rider.riderNm,
+      			rider.riderCelno,
+      			rider.riderWthdrBankCd,
+            IFNULL((
+            SELECT  bank.bankNm
+              FROM  tb_banks AS bank
+             WHERE  bank.bankCd = rider.riderWthdrBankCd
+            ),'') AS riderWthdrBankNm,
+      			IFNULL( rider.riderWthdrAcnt,'') AS riderWthdrAcnt,
+      			rider.riderMinWthdrAmnt,
+      			IFNULL( SUM(CASE when pointSeCd = '01' THEN pointAmnt when pointSeCd = '02' THEN pointAmnt * -1 ELSE 0 END ),0) AS riderPoint
+      FROM	tb_riders AS rider
+      LEFT
+     OUTER
+      JOIN  tb_rider_points AS point
+        ON	rider.riderId = point.riderId
+     WHERE  1 = 1
+     <if test="riderId != null and riderId != ''">
+       AND  rider.riderId = #{riderId}
+     </if>
+
+     GROUP
+        BY	riderId
   </select>
 </mapper>
