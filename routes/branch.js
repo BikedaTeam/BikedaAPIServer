@@ -47,6 +47,7 @@ router.get('/test', function ( req, res, next) {
 router.get('/realTimeDelivery', function( req, res, next ) {
   mysqlConnect('branch', 'realTimeDelivery', req.query, function (error, results) {
     if (error) {
+      console.log(error);
       res.status(500).json(util.successFalse("SQL Error"));
     } else {
       var string = JSON.stringify(results);
@@ -698,10 +699,11 @@ router.get('/branchPoint', util.isLoggedin, function( req, res, next ) {
   });
 });
 
-// 기사 포인트 총액 조회
-router.get('/riderTotPoint', util.isLoggedin, function( req, res, next ) {
-  mysqlConnect('branch', 'riderTotPoint', req.query, function (error, results) {
+// 상점 포인트 조회
+router.get('/storePoint', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'storePoint', req.query, function (error, results) {
     if (error) {
+      console.log(error);
       res.status(500).json(util.successFalse("SQL Error"));
     } else {
       var string = JSON.stringify(results);

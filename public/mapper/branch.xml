@@ -86,14 +86,76 @@
       			SELECT	rider.riderCelno
       			  FROM	tb_riders AS rider
       			 WHERE	dlvr.riderId = rider.riderId
-      			),"") AS riderCelno
+      			),"") AS riderCelno,
+            "N" AS shareYn
       FROM	tb_deliveries AS dlvr
      WHERE  1 = 1
        AND  dlvr.stoBrcofcId = #{stoBrcofcId}
        AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
        AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
+     UNION
+       ALL
+    SELECT	dlvr.dlvryNo,
+     			  dlvr.stoBrcofcId,
+       			IFNULL((
+       			SELECT	branch.brcofcNm
+       			  FROM	tb_branches AS branch
+       			 WHERE	dlvr.stoBrcofcId = branch.brcofcId
+       			),"") AS stoBrcofcNm,
+       			dlvr.stoId,
+       			IFNULL((
+       			SELECT	store.stoMtlty
+       			  FROM	tb_stores AS store
+       			 WHERE	dlvr.stoId = store.stoId
+       			),"") AS stoMtlty,
+       			IFNULL((
+       			SELECT	store.stoTelno
+       			  FROM	tb_stores AS store
+       			 WHERE	dlvr.stoId = store.stoId
+       			),"") AS stoTelno,
+       			dlvr.dlvryCusTelno,
+       			dlvr.dlvryCusAdres,
+       			dlvr.dlvryCusRoadAdres,
+       			dlvr.dlvryCusDetlAdres,
+       			dlvr.dlvryCusLa,
+       			dlvr.dlvryCusLo,
+       			dlvr.dlvryPaySeCd,
+       			dlvr.dlvryFoodAmnt,
+       			dlvr.dlvryAmnt,
+       			dlvr.dlvryPickReqTm,
+       			date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") dlvryRecvDt,
+       			date_format(dlvr.dlvryDsptcDt, "%Y%m%d%H%i%s") dlvryDsptcDt,
+       			date_format(dlvr.dlvryPickDt, "%Y%m%d%H%i%s") dlvryPickDt,
+       			date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") dlvryTcDt,
+       			dlvr.dlvryDstnc,
+       			dlvr.dlvryStateCd,
+       			dlvr.dlvryReqCn,
+       			dlvr.riderBrcofcId,
+       			IFNULL((
+       			SELECT	branch.brcofcNm
+       			  FROM	tb_branches AS branch
+       			 WHERE	dlvr.riderBrcofcId = branch.brcofcId
+       			),"") AS riderBrcofcNm,
+       			dlvr.riderId,
+       			IFNULL((
+       			SELECT	rider.riderNm
+       			  FROM	tb_riders AS rider
+       			 WHERE	dlvr.riderId = rider.riderId
+       			),"") AS riderNm,
+       			IFNULL((
+       			SELECT	rider.riderCelno
+       			  FROM	tb_riders AS rider
+       			 WHERE	dlvr.riderId = rider.riderId
+       			),"") AS riderCelno,
+            "Y" AS shareYn
+      FROM	tb_deliveries AS dlvr
+     WHERE  1 = 1
+       AND  dlvr.stoBrcofcId != #{stoBrcofcId}
+       AND  dlvr.riderBrcofcId = #{riderBrcofcId}
+       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
+       AND  date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
      ORDER
-        BY  dlvr.dlvryRecvDt desc
+        BY  dlvryRecvDt desc
   </select>
   <!-- 실시간 배달 상태 수량 -->
   <select id="realTimeDeliveryCount">
@@ -727,6 +789,26 @@
         BY  pointRegDt desc
   </select>
 
+  <!-- 상점 포인트 조회 -->
+  <select id="storePoint">
+    SELECT	store.stoId,
+      			store.stoMtlty,
+            store.stoRprsntvNm,
+      			store.stoTelno,
+      			IFNULL( SUM(CASE when pointSeCd = '01' THEN pointAmnt when pointSeCd = '02' THEN pointAmnt * -1 ELSE 0 END ),0) AS stoPoint
+      FROM	tb_stores AS store
+      LEFT
+     OUTER
+      JOIN  tb_store_points AS point
+        ON	store.stoId = point.stoId
+     WHERE  store.brcofcId = #{brcofcId}
+     <if test="stoId != null and stoId != ''">
+       AND  store.stoId = #{stoId}
+     </if>
+
+     GROUP
+        BY	stoId
+  </select>
 
   <!-- 기사 포인트 조회 -->
   <select id="riderPoint">
@@ -747,12 +829,149 @@
      OUTER
       JOIN  tb_rider_points AS point
         ON	rider.riderId = point.riderId
-     WHERE  1 = 1
+     WHERE  rider.brcofcId = #{brcofcId}
      <if test="riderId != null and riderId != ''">
        AND  rider.riderId = #{riderId}
      </if>
 
      GROUP
         BY	riderId
+  </select>
+
+  <!-- 배달 내역 -->
+  <select id="deliverys">
+    SELECT	dlvr.dlvryNo,
+      			dlvr.stoBrcofcId,
+      			IFNULL((
+      			SELECT	branch.brcofcNm
+      			  FROM	tb_branches AS branch
+      			 WHERE	dlvr.stoBrcofcId = branch.brcofcId
+      			),"") AS stoBrcofcNm,
+      			dlvr.stoId,
+      			IFNULL((
+      			SELECT	store.stoMtlty
+      			  FROM	tb_stores AS store
+      			 WHERE	dlvr.stoId = store.stoId
+      			),"") AS stoMtlty,
+      			IFNULL((
+      			SELECT	store.stoTelno
+      			  FROM	tb_stores AS store
+      			 WHERE	dlvr.stoId = store.stoId
+      			),"") AS stoTelno,
+      			dlvr.dlvryCusTelno,
+      			dlvr.dlvryCusAdres,
+      			dlvr.dlvryCusRoadAdres,
+      			dlvr.dlvryCusDetlAdres,
+      			dlvr.dlvryCusLa,
+      			dlvr.dlvryCusLo,
+      			dlvr.dlvryPaySeCd,
+      			dlvr.dlvryFoodAmnt,
+      			dlvr.dlvryAmnt,
+            dlvr.dlvryVatAmnt,
+            dlvr.dlvryFeeAmnt,
+            dlvr.dlvryBrcofcFeeAmnt,
+            dlvr.dlvryRiderFeeAmnt,
+            dlvr.dlvryShareFeeAmnt,
+      			dlvr.dlvryPickReqTm,
+      			date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") dlvryRecvDt,
+      			date_format(dlvr.dlvryDsptcDt, "%Y%m%d%H%i%s") dlvryDsptcDt,
+      			date_format(dlvr.dlvryPickDt, "%Y%m%d%H%i%s") dlvryPickDt,
+      			date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") dlvryTcDt,
+      			dlvr.dlvryDstnc,
+      			dlvr.dlvryStateCd,
+      			dlvr.dlvryReqCn,
+      			dlvr.riderBrcofcId,
+      			IFNULL((
+      			SELECT	branch.brcofcNm
+      			  FROM	tb_branches AS branch
+      			 WHERE	dlvr.riderBrcofcId = branch.brcofcId
+      			),"") AS riderBrcofcNm,
+      			dlvr.riderId,
+      			IFNULL((
+      			SELECT	rider.riderNm
+      			  FROM	tb_riders AS rider
+      			 WHERE	dlvr.riderId = rider.riderId
+      			),"") AS riderNm,
+      			IFNULL((
+      			SELECT	rider.riderCelno
+      			  FROM	tb_riders AS rider
+      			 WHERE	dlvr.riderId = rider.riderId
+      			),"") AS riderCelno,
+            "N" AS shareYn
+      FROM	tb_deliveries AS dlvr
+     WHERE  1 = 1
+       AND  dlvr.stoBrcofcId = #{stoBrcofcId}
+       AND  dlvr.dlvryStateCd = '04'
+       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
+       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd
+     UNION
+       ALL
+    SELECT	dlvr.dlvryNo,
+     			  dlvr.stoBrcofcId,
+     			  IFNULL((
+     			  SELECT	branch.brcofcNm
+     			    FROM	tb_branches AS branch
+     			   WHERE	dlvr.stoBrcofcId = branch.brcofcId
+     			  ),"") AS stoBrcofcNm,
+     			  dlvr.stoId,
+       			IFNULL((
+       			SELECT	store.stoMtlty
+       			  FROM	tb_stores AS store
+       			 WHERE	dlvr.stoId = store.stoId
+       			),"") AS stoMtlty,
+       			IFNULL((
+       			SELECT	store.stoTelno
+       			  FROM	tb_stores AS store
+       			 WHERE	dlvr.stoId = store.stoId
+       			),"") AS stoTelno,
+       			dlvr.dlvryCusTelno,
+       			dlvr.dlvryCusAdres,
+       			dlvr.dlvryCusRoadAdres,
+       			dlvr.dlvryCusDetlAdres,
+       			dlvr.dlvryCusLa,
+       			dlvr.dlvryCusLo,
+       			dlvr.dlvryPaySeCd,
+       			dlvr.dlvryFoodAmnt,
+       			dlvr.dlvryAmnt,
+            dlvr.dlvryVatAmnt,
+            dlvr.dlvryFeeAmnt,
+            dlvr.dlvryBrcofcFeeAmnt,
+            dlvr.dlvryRiderFeeAmnt,
+            dlvr.dlvryShareFeeAmnt,
+       			dlvr.dlvryPickReqTm,
+       			date_format(dlvr.dlvryRecvDt, "%Y%m%d%H%i%s") dlvryRecvDt,
+       			date_format(dlvr.dlvryDsptcDt, "%Y%m%d%H%i%s") dlvryDsptcDt,
+       			date_format(dlvr.dlvryPickDt, "%Y%m%d%H%i%s") dlvryPickDt,
+       			date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") dlvryTcDt,
+       			dlvr.dlvryDstnc,
+       			dlvr.dlvryStateCd,
+       			dlvr.dlvryReqCn,
+       			dlvr.riderBrcofcId,
+       			IFNULL((
+       			SELECT	branch.brcofcNm
+       			  FROM	tb_branches AS branch
+       			 WHERE	dlvr.riderBrcofcId = branch.brcofcId
+       			),"") AS riderBrcofcNm,
+       			dlvr.riderId,
+       			IFNULL((
+       			SELECT	rider.riderNm
+       			  FROM	tb_riders AS rider
+       			 WHERE	dlvr.riderId = rider.riderId
+       			),"") AS riderNm,
+       			IFNULL((
+       			SELECT	rider.riderCelno
+       			  FROM	tb_riders AS rider
+       			 WHERE	dlvr.riderId = rider.riderId
+       			),"") AS riderCelno,
+            "Y" AS shareYn
+      FROM  tb_deliveries AS dlvr
+     WHERE  1 = 1
+       AND  dlvr.stoBrcofcId != #{stoBrcofcId}
+       AND  dlvr.riderBrcofcId = #{riderBrcofcId}
+       AND  dlvr.dlvryStateCd = '04'
+       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
+       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
+     ORDER
+        BY  dlvryTcDt desc
   </select>
 </mapper>
