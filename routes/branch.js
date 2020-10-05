@@ -726,4 +726,18 @@ router.get('/riderPoint', util.isLoggedin, function( req, res, next ) {
     }
   });
 });
+
+// 배달 대행 내역 조회
+router.get('/deliverys', util.isLoggedin, function( req, res, next ) {
+  mysqlConnect('branch', 'deliverys', req.query, function (error, results) {
+    if (error) {
+      res.status(500).json(util.successFalse("SQL Error"));
+    } else {
+      var string = JSON.stringify(results);
+      var json =  JSON.parse(string);
+      res.status(200).json(util.successTrue(json));
+    }
+  });
+});
+
 module.exports = router;

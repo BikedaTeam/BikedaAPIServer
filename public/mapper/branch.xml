@@ -902,8 +902,8 @@
      WHERE  1 = 1
        AND  dlvr.stoBrcofcId = #{stoBrcofcId}
        AND  dlvr.dlvryStateCd = '04'
-       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
-       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd
+       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d") <![CDATA[ >= ]]> #{stdDate}
+       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d") <![CDATA[ <= ]]> #{endDate}
      UNION
        ALL
     SELECT	dlvr.dlvryNo,
@@ -969,8 +969,8 @@
        AND  dlvr.stoBrcofcId != #{stoBrcofcId}
        AND  dlvr.riderBrcofcId = #{riderBrcofcId}
        AND  dlvr.dlvryStateCd = '04'
-       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") <![CDATA[ >= ]]> #{dlvryRecvDtStd}
-       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d%H%i%s") <![CDATA[ <= ]]> #{dlvryRecvDtEnd}
+       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d") <![CDATA[ >= ]]> #{stdDate}
+       AND  date_format(dlvr.dlvryTcDt, "%Y%m%d") <![CDATA[ <= ]]> #{endDate}
      ORDER
         BY  dlvryTcDt desc
   </select>
